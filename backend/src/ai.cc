@@ -17,7 +17,7 @@ bool ai::generate_move(int max_depth) {
    if(turns.size() > 0) {
       has_stored_move = true;
       stored_move = new turn();
-      // The smartest AI ever: Choose the first move you find is possible:
+      // The smartest AI ever: Choose the first move you find:
       stored_move = turns[0];
       return true;
    } else {
