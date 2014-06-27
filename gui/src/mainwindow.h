@@ -40,9 +40,9 @@ private slots:
 
 private:
 
-   void createToolBox();
+   void createInventories();
    void createActions();
-   void createMenus();
+   void createMenu();
    void createToolbar();
    
 //     QWidget *createBackgroundCellWidget(const QString &text,
@@ -56,6 +56,12 @@ private:
    GameScene *scene;
    QGraphicsView *view;
 
+   QGraphicsScene *sceneWhite;
+   QGraphicsView *viewWhite;
+   
+   QGraphicsScene *sceneBlack;
+   QGraphicsView *viewBlack;
+
    QAction *exitAction;
    QAction *undoAction;
    QAction *aboutAction;
@@ -65,18 +71,11 @@ private:
    QMenu *editMenu;
    QMenu *aboutMenu;
 
-//     QToolBar *textToolBar;
-     QToolBar *myToolBar;
-//     QToolBar *colorToolBar;
-//     QToolBar *pointerToolbar;
-// 
-//     QComboBox *sceneScaleCombo;
-//     QComboBox *itemColorCombo;
-//     QComboBox *textColorCombo;
-//     QComboBox *fontSizeCombo;
-//     QFontComboBox *fontCombo;
-// 
-//     QToolBox *toolBox;
+   QToolBar *myToolBar;
+
+
+
+// QToolBox *toolBox;
 //     QButtonGroup *buttonGroup;
 //     QButtonGroup *pointerTypeGroup;
 //     QButtonGroup *backgroundButtonGroup;

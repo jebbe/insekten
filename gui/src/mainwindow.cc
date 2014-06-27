@@ -6,11 +6,12 @@
 MainWindow::MainWindow()
 {
    createActions();
-   createToolBox();
-   createMenus();
-// 
-//     scene = new DiagramScene(itemMenu, this);
-//     scene->setSceneRect(QRectF(0, 0, 5000, 5000));
+   createInventories();
+   createMenu();
+
+   scene = new GameScene(this);
+   scene->setSceneRect(QRectF(0, 0, 6000, 6000));
+   view = new QGraphicsView(scene);
 //     connect(scene, SIGNAL(itemInserted(DiagramItem*)),
 //             this, SLOT(itemInserted(DiagramItem*)));
 //     connect(scene, SIGNAL(textInserted(QGraphicsTextItem*)),
@@ -20,21 +21,36 @@ MainWindow::MainWindow()
 
    createToolbar();
 
-//     QHBoxLayout *layout = new QHBoxLayout;
-//     layout->addWidget(toolBox);
-//     view = new QGraphicsView(scene);
-//     layout->addWidget(view);
-// 
-//     QWidget *widget = new QWidget;
-//     widget->setLayout(layout);
-// 
-//     setCentralWidget(widget);
-     setWindowTitle(tr("Hive"));
-     setUnifiedTitleAndToolBarOnMac(true);
+   QHBoxLayout *layout = new QHBoxLayout;
+   layout->addWidget(viewWhite);
+   layout->addWidget(view);
+   layout->addWidget(viewBlack);
+
+   QWidget *widget = new QWidget;
+   widget->setLayout(layout);
+
+   setCentralWidget(widget);
+   setWindowTitle(tr("Hive"));
+   setUnifiedTitleAndToolBarOnMac(true);
 }
 
 
-void MainWindow::createToolBox() {
+void MainWindow::createInventories() {
+   
+   sceneWhite = new QGraphicsScene(this);
+   sceneWhite->setSceneRect(QRectF(0, 0, 120, 900));
+   viewWhite = new QGraphicsView(sceneWhite);
+   viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+
+   sceneBlack = new QGraphicsScene(this);
+   sceneBlack->setSceneRect(QRectF(0, 0, 120, 900));
+   viewBlack = new QGraphicsView(sceneBlack);
+   viewBlack->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   
+   QPixmap queenWhite(":/images/white_queen.png");
+   QGraphicsPixmapItem* item = sceneWhite->addPixmap(queenWhite);
    
 }
 
@@ -63,7 +79,7 @@ void MainWindow::createActions() {
 }
 
 
-void MainWindow::createMenus() {
+void MainWindow::createMenu() {
    fileMenu = menuBar()->addMenu(tr("&File"));
    fileMenu->addAction(newGameAction);
    fileMenu->addAction(exitAction);
