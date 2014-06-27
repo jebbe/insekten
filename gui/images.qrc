@@ -2,6 +2,8 @@
 <qresource>
     <file>images/white_queen.png</file>
     <file>images/black_queen.png</file>
+    <file>images/undo.png</file>
+    <file>images/newgame.png</file>
 </qresource>
 </RCC>
  
