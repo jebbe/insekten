@@ -3,6 +3,11 @@
 
 #include "mainwindow.h"
 
+#define HEIGHT 87
+#define INNER_HEIGHT 70
+#define WIDTH 100
+#define NO_PIECES 6 // Should be determined automatically depending on the rules
+
 MainWindow::MainWindow()
 {
    createActions();
@@ -22,6 +27,8 @@ MainWindow::MainWindow()
    createToolbar();
 
    QHBoxLayout *layout = new QHBoxLayout;
+   viewWhite->setMinimumSize(WIDTH+8, 0);
+   viewBlack->setMinimumSize(WIDTH+8, 0);
    layout->addWidget(viewWhite);
    layout->addWidget(view);
    layout->addWidget(viewBlack);
@@ -38,20 +45,25 @@ MainWindow::MainWindow()
 void MainWindow::createInventories() {
    
    sceneWhite = new QGraphicsScene(this);
-   sceneWhite->setSceneRect(QRectF(0, 0, 120, 900));
+   sceneWhite->setSceneRect(QRectF(0, 0, WIDTH, NO_PIECES*HEIGHT));
    viewWhite = new QGraphicsView(sceneWhite);
    viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
 
    sceneBlack = new QGraphicsScene(this);
-   sceneBlack->setSceneRect(QRectF(0, 0, 120, 900));
+   sceneBlack->setSceneRect(QRectF(0, 0, WIDTH, NO_PIECES*HEIGHT));
    viewBlack = new QGraphicsView(sceneBlack);
    viewBlack->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    
+   QGraphicsPixmapItem* item;
    QPixmap queenWhite(":/images/white_queen.png");
-   QGraphicsPixmapItem* item = sceneWhite->addPixmap(queenWhite);
+   item = sceneWhite->addPixmap(queenWhite);
+   item->setPos(0, 0);   
    
+   QPixmap queenBlack(":/images/black_queen.png");
+   item = sceneBlack->addPixmap(queenBlack);
+   item->setPos(0, 0);   
 }
 
 
