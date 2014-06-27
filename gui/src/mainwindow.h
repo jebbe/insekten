@@ -43,7 +43,7 @@ private:
    void createToolBox();
    void createActions();
    void createMenus();
-   void createToolbars();
+   void createToolbar();
    
 //     QWidget *createBackgroundCellWidget(const QString &text,
 //                                         const QString &image);
@@ -66,7 +66,7 @@ private:
    QMenu *aboutMenu;
 
 //     QToolBar *textToolBar;
-//     QToolBar *editToolBar;
+     QToolBar *myToolBar;
 //     QToolBar *colorToolBar;
 //     QToolBar *pointerToolbar;
 // 

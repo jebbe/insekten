@@ -18,7 +18,7 @@ MainWindow::MainWindow()
 //     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
 //         this, SLOT(itemSelected(QGraphicsItem*)));
 
-   createToolbars();
+   createToolbar();
 
 //     QHBoxLayout *layout = new QHBoxLayout;
 //     layout->addWidget(toolBox);
@@ -76,8 +76,10 @@ void MainWindow::createMenus() {
 }
 
 
-void MainWindow::createToolbars() {
-   
+void MainWindow::createToolbar() {
+    myToolBar = addToolBar(tr("Tools"));
+    myToolBar->addAction(newGameAction);
+    myToolBar->addAction(undoAction);
 }
 
 
