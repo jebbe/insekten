@@ -21,7 +21,7 @@ MainWindow::MainWindow()
    viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    
    sceneMain = new GameScene(this);
-   sceneMain->setSceneRect(QRectF(0, 0, 6000, 6000));
+   sceneMain->setSceneRect(QRectF(-4000, -4000, 4000, 4000));
    viewMain = new QGraphicsView(sceneMain);
 //     connect(scene, SIGNAL(itemInserted(DiagramItem*)),
 //             this, SLOT(itemInserted(DiagramItem*)));

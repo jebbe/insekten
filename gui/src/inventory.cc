@@ -70,6 +70,15 @@ InventoryScene::InventoryScene(bool color, QObject *parent)
    item->setPos(0, jj*(HEIGHT+2*YSHIFT));
    jj++;
 
+   image.load(":/images/from_shade.png");
+   item = this->addPixmap(image);
+   item->setPos(0-2*XSHIFT, 1*(HEIGHT+2*YSHIFT)-2*YSHIFT);
+
+   
+   image.load(":/images/to_shade.png");
+   item = this->addPixmap(image);
+   item->setPos(0, 7*(HEIGHT+2*YSHIFT));
+   
 }
 
 #endif 
