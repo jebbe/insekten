@@ -3,8 +3,10 @@
 
 #include "mainwindow.h"
 
-MainWindow::MainWindow()
-{
+MainWindow::MainWindow() {
+   
+   game_active = false;
+   
    createActions();
    createMenu();
 
@@ -13,7 +15,7 @@ MainWindow::MainWindow()
    viewWhite = new QGraphicsView(sceneWhite);
    viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-
+   
    sceneBlack = new InventoryScene(true, this);
    sceneBlack->setSceneRect(QRectF(-XSHIFT, 0, WIDTH, NO_PIECES*(HEIGHT+2*YSHIFT)));
    viewBlack = new QGraphicsView(sceneBlack);
@@ -114,14 +116,52 @@ void MainWindow::about() {
 
 
 void MainWindow::newGame() {
-    QMessageBox::about(this, tr("New game"),
-                       tr("New Game dialog placeholder." ));
+   newgamedialog = new QDialog(this);
+   ui = new Ui::NewGame;
+   ui->setupUi(newgamedialog);
+   newgamedialog->setFixedSize(270,308); 
+   newgamedialog->show();
+   connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(beginGame()));
+   connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(beginGame()));
 }
 
 
 void MainWindow::undoMove() {
     QMessageBox::about(this, tr("Undo"),
                        tr("Undo placeholder." ));
+}
+
+
+void MainWindow::abortBeginGame() {
+   newgamedialog->close();
+   delete newgamedialog;
+   delete ui;
+}
+
+
+void MainWindow::beginGame() {
+   if(game_active) {
+      // Clear the running game
+      delete game;
+   }
+
+   // Setup a new game
+   game_active = true;
+   int my_rules = 0;
+   my_rules += (int(ui->mosquito_check->isChecked()));
+   my_rules += (2*int(ui->ladybug_check->isChecked()));
+   my_rules += (4*int(ui->pillbug_check->isChecked()));
+   game = new ai(ruleset(my_rules));
+   
+   white_human = ui->white_human->isChecked();
+   black_human = ui->black_human->isChecked();
+   white_level = ui->white_level->value();
+   black_level = ui->black_level->value();
+   
+   // Clear the new game dialog
+   newgamedialog->close();
+   delete newgamedialog;
+   delete ui;
 }
 
 #endif

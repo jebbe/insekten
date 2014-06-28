@@ -5,8 +5,8 @@
 
 #include "common.h"
 
-class InventoryScene : public QGraphicsScene
-{
+class InventoryScene : public QGraphicsScene {
+   
     Q_OBJECT
 
 public:

@@ -5,54 +5,40 @@
 #include <QtGui>
 //#include <QLabel>
 
+#include "ai.h"
 #include "gamescene.h"
 #include "inventory.h"
+#include "ui_newgame.h"
 #include "common.h"
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
+   
     Q_OBJECT
 
 public:
    MainWindow();
 
 private slots:
-//     void backgroundButtonGroupClicked(QAbstractButton *button);
-//     void buttonGroupClicked(int id);
-//     void deleteItem();
-//     void pointerGroupClicked(int id);
-//     void bringToFront();
-//     void sendToBack();
-//     void itemInserted(DiagramItem *item);
-//     void textInserted(QGraphicsTextItem *item);
-//     void currentFontChanged(const QFont &font);
-//     void fontSizeChanged(const QString &size);
-//     void sceneScaleChanged(const QString &scale);
-//     void textColorChanged();
-//     void itemColorChanged();
-//     void lineColorChanged();
-//     void textButtonTriggered();
-//     void fillButtonTriggered();
-//     void lineButtonTriggered();
-//     void handleFontChange();
-//     void itemSelected(QGraphicsItem *item);
+   
    void newGame();
    void about();
    void undoMove();
+   
+   void beginGame();
+   void abortBeginGame();
 
 private:
-
+   
+   bool game_active;
+   ai* game;
+   bool white_human;
+   bool black_human;
+   int white_level;
+   int black_level;
+   
    void createActions();
    void createMenu();
    void createToolbar();
-   
-//     QWidget *createBackgroundCellWidget(const QString &text,
-//                                         const QString &image);
-//     QWidget *createCellWidget(const QString &text,
-//                               DiagramItem::DiagramType type);
-//     QMenu *createColorMenu(const char *slot, QColor defaultColor);
-//     QIcon createColorToolButtonIcon(const QString &image, QColor color);
-//     QIcon createColorIcon(QColor color);
 
    GameScene *sceneMain;
    QGraphicsView *viewMain;
@@ -74,21 +60,9 @@ private:
 
    QToolBar *myToolBar;
 
-
-
-// QToolBox *toolBox;
-//     QButtonGroup *buttonGroup;
-//     QButtonGroup *pointerTypeGroup;
-//     QButtonGroup *backgroundButtonGroup;
-//     QToolButton *fontColorToolButton;
-//     QToolButton *fillColorToolButton;
-//     QToolButton *lineColorToolButton;
-//     QAction *boldAction;
-//     QAction *underlineAction;
-//     QAction *italicAction;
-//     QAction *textAction;
-//     QAction *fillAction;
-//     QAction *lineAction;
+   QDialog *newgamedialog;
+   Ui::NewGame *ui;
+   
 };
 
 #endif

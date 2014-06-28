@@ -93,6 +93,7 @@ public:
    int y_max();
    type get_tile_type(int xx, int yy);
    bool get_tile_color(int xx, int yy);
+   int in_stock(type kind, bool color);
    bool whose_turn();
    bool buried_tiles(int xx, int yy, vector<type> &kind, vector<bool> &color);
    bool buried_tiles(int xx, int yy);

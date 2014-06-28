@@ -249,6 +249,10 @@ bool game::get_tile_color(int xx, int yy) {
    return empty;
 }
 
+int game::in_stock(type kind, bool color) {
+   return stock[int(color)][int(kind)];
+}
+
 bool game::whose_turn() {
    return bool(half_turns%2);
 }
