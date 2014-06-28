@@ -3,9 +3,11 @@
 
 #include <QMainWindow>
 #include <QtGui>
-#include <QLabel>
+//#include <QLabel>
 
 #include "gamescene.h"
+#include "inventory.h"
+#include "common.h"
 
 class MainWindow : public QMainWindow
 {
@@ -40,7 +42,6 @@ private slots:
 
 private:
 
-   void createInventories();
    void createActions();
    void createMenu();
    void createToolbar();
@@ -53,13 +54,13 @@ private:
 //     QIcon createColorToolButtonIcon(const QString &image, QColor color);
 //     QIcon createColorIcon(QColor color);
 
-   GameScene *scene;
-   QGraphicsView *view;
+   GameScene *sceneMain;
+   QGraphicsView *viewMain;
 
-   QGraphicsScene *sceneWhite;
+   InventoryScene *sceneWhite;
    QGraphicsView *viewWhite;
    
-   QGraphicsScene *sceneBlack;
+   InventoryScene *sceneBlack;
    QGraphicsView *viewBlack;
 
    QAction *exitAction;

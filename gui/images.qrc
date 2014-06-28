@@ -2,6 +2,20 @@
 <qresource>
     <file>images/white_queen.png</file>
     <file>images/black_queen.png</file>
+    <file>images/white_ant.png</file>
+    <file>images/black_ant.png</file>
+    <file>images/white_spider.png</file>
+    <file>images/black_spider.png</file>
+    <file>images/white_cricket.png</file>
+    <file>images/black_cricket.png</file>
+    <file>images/white_beetle.png</file>
+    <file>images/black_beetle.png</file>
+    <file>images/white_ladybug.png</file>
+    <file>images/black_ladybug.png</file>
+    <file>images/white_mosquito.png</file>
+    <file>images/black_mosquito.png</file>
+    <file>images/white_pillbug.png</file>
+    <file>images/black_pillbug.png</file>
     <file>images/undo.png</file>
     <file>images/newgame.png</file>
 </qresource>

@@ -3,20 +3,26 @@
 
 #include "mainwindow.h"
 
-#define HEIGHT 87
-#define INNER_HEIGHT 70
-#define WIDTH 100
-#define NO_PIECES 6 // Should be determined automatically depending on the rules
-
 MainWindow::MainWindow()
 {
    createActions();
-   createInventories();
    createMenu();
 
-   scene = new GameScene(this);
-   scene->setSceneRect(QRectF(0, 0, 6000, 6000));
-   view = new QGraphicsView(scene);
+   sceneWhite = new InventoryScene(false, this);
+   sceneWhite->setSceneRect(QRectF(-XSHIFT, 0, WIDTH, NO_PIECES*(HEIGHT+2*YSHIFT)));
+   viewWhite = new QGraphicsView(sceneWhite);
+   viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+
+   sceneBlack = new InventoryScene(true, this);
+   sceneBlack->setSceneRect(QRectF(-XSHIFT, 0, WIDTH, NO_PIECES*(HEIGHT+2*YSHIFT)));
+   viewBlack = new QGraphicsView(sceneBlack);
+   viewBlack->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   
+   sceneMain = new GameScene(this);
+   sceneMain->setSceneRect(QRectF(0, 0, 6000, 6000));
+   viewMain = new QGraphicsView(sceneMain);
 //     connect(scene, SIGNAL(itemInserted(DiagramItem*)),
 //             this, SLOT(itemInserted(DiagramItem*)));
 //     connect(scene, SIGNAL(textInserted(QGraphicsTextItem*)),
@@ -27,10 +33,10 @@ MainWindow::MainWindow()
    createToolbar();
 
    QHBoxLayout *layout = new QHBoxLayout;
-   viewWhite->setMinimumSize(WIDTH+8, 0);
-   viewBlack->setMinimumSize(WIDTH+8, 0);
+   viewWhite->setMinimumSize(WIDTH+8+2*XSHIFT, 0);
+   viewBlack->setMinimumSize(WIDTH+8+2*XSHIFT, 0);
    layout->addWidget(viewWhite);
-   layout->addWidget(view);
+   layout->addWidget(viewMain);
    layout->addWidget(viewBlack);
 
    QWidget *widget = new QWidget;
@@ -42,29 +48,18 @@ MainWindow::MainWindow()
 }
 
 
-void MainWindow::createInventories() {
-   
-   sceneWhite = new QGraphicsScene(this);
-   sceneWhite->setSceneRect(QRectF(0, 0, WIDTH, NO_PIECES*HEIGHT));
-   viewWhite = new QGraphicsView(sceneWhite);
-   viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-   viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-
-   sceneBlack = new QGraphicsScene(this);
-   sceneBlack->setSceneRect(QRectF(0, 0, WIDTH, NO_PIECES*HEIGHT));
-   viewBlack = new QGraphicsView(sceneBlack);
-   viewBlack->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-   viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-   
-   QGraphicsPixmapItem* item;
-   QPixmap queenWhite(":/images/white_queen.png");
-   item = sceneWhite->addPixmap(queenWhite);
-   item->setPos(0, 0);   
-   
-   QPixmap queenBlack(":/images/black_queen.png");
-   item = sceneBlack->addPixmap(queenBlack);
-   item->setPos(0, 0);   
-}
+// void MainWindow::createInventories() {
+//    
+//    
+//    QGraphicsPixmapItem* item;
+//    QPixmap queenWhite(":/images/white_queen.png");
+//    item = sceneWhite->addPixmap(queenWhite);
+//    item->setPos(0, 0);   
+//    
+//    QPixmap queenBlack(":/images/black_queen.png");
+//    item = sceneBlack->addPixmap(queenBlack);
+//    item->setPos(0, 0);   
+// }
 
 
 void MainWindow::createActions() {
