@@ -3,6 +3,8 @@
 
 #include "piece.h"
 
+// All numbers should be even, since we divide by two a lot.
+
 // Height of the tiles
 const int HEIGHT = 72;
 // Width of the tiles

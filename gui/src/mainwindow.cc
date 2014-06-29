@@ -183,6 +183,23 @@ void MainWindow::beginGame() {
    my_rules += (2*int(ui->ladybug_check->isChecked()));
    my_rules += (4*int(ui->pillbug_check->isChecked()));
    game = new ai(ruleset(my_rules));
+
+   
+   game->place(queen, 0, 0);
+   game->place(queen, 0, 1);
+   game->place(ant, 0, -1);
+   game->place(ant, 0, 2);
+   game->move(0, -1, -1, 0);
+   game->move(0, 2, 1, 1);
+   game->place(beetle, -1, -1);
+   game->place(beetle, 1, 2);
+   game->move(-1, -1, -1, 0);
+   game->move(1, 2, 1, 1);
+   game->place(beetle, 0, -1);
+   game->place(cricket, 0, 2);
+   game->move(0, -1, 0, 0);
+   game->place(cricket, 0, 3);
+
    
    white_human = ui->white_human->isChecked();
    black_human = ui->black_human->isChecked();
@@ -210,6 +227,11 @@ void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
    
    if(!game_active) return;
    
+   if(game->whose_turn()) {
+      resetClicked();
+      return;
+   }
+   
    type kind = sceneWhite->clicked_what(game, xx, yy);
    if(kind == empty) {
       resetClicked();
@@ -230,6 +252,11 @@ void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
 void MainWindow::blackInventoryOriginSelected(int xx, int yy) {
    
    if(!game_active) return;
+   
+   if(!game->whose_turn()) {
+      resetClicked();
+      return;
+   }
 
    type kind = sceneBlack->clicked_what(game, xx, yy);
    if(kind == empty) {

@@ -28,8 +28,10 @@ public:
 
 private:
    void draw_single_piece(int xx, int yy, type kind, bool color);
-   int gameToSceneX(int xx, int stackheight);
-   int gameToSceneY(int yy, int stackheight);
+   int SceneToGameX(int xx, int yy);
+   int SceneToGameY(int xx, int yy);
+   int gameToSceneX(int xx, int yy, int stackheight);
+   int gameToSceneY(int xx, int yy, int stackheight);
 
 };
 

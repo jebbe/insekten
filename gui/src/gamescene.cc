@@ -30,15 +30,30 @@ void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
 // COORDINATE TRANSFORMATIONS //
 ////////////////////////////////
 
-int GameScene::gameToSceneX(int xx, int stackheight) {
+int GameScene::SceneToGameX(int xx, int yy) {
    // TODO
    return 1000;
 }
 
 
-int GameScene::gameToSceneY(int yy, int stackheight) {
+int GameScene::SceneToGameY(int xx, int yy) {
    // TODO
    return 1000;
+}
+
+
+int GameScene::gameToSceneX(int xx, int yy, int stackheight) {
+   int sceneX = xx * (WIDTH - SPACING/2) - stackheight*XSHIFT;
+   sceneX = sceneX + MAIN_SIZE/2 - WIDTH/2;
+   return sceneX;
+}
+
+
+int GameScene::gameToSceneY(int xx, int yy, int stackheight) {
+   int sceneY = yy * HEIGHT - stackheight*YSHIFT;
+   sceneY = sceneY - xx*HEIGHT/2;
+   sceneY = sceneY + MAIN_SIZE/2 - WIDTH/2;
+   return sceneY;
 }
 
 ////////////////////
@@ -56,42 +71,6 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    int ymin = game->y_min();
    int xmax = game->x_max();
    int ymax = game->y_max();
-   
-   // Draw the pieces on the board
-   for(int ii=xmin; ii<=xmax; ii++) {
-      for(int jj=ymin; jj<=ymax; jj++) {
-         
-         vector<type> kind;
-         vector<bool> color;
-         game->buried_tiles(ii, jj, kind, color);
-         int kk;
-         for(kk=0; kk<int(kind.size()); kk++) {
-            draw_single_piece(gameToSceneX(ii, kk), gameToSceneY(jj, kk), 
-                              kind[kk], color[kk]);
-         }
-         draw_single_piece(gameToSceneX(ii, kk), gameToSceneY(jj, kk), 
-                     game->get_tile_type(ii, jj), game->get_tile_color(ii, jj));
-
-      }
-   }
-   
-   // Draw the FROM marker
-   if(  my_move->origin_selected &&
-        my_move->origin_type == empty) {
-      
-      // Figure out the height of the stack
-      vector<type> kind;
-      vector<bool> color;
-      game->buried_tiles(my_move->origin_x, my_move->origin_y, kind, color);
-      int stackheight = color.size();
-   
-      int ii = gameToSceneX(my_move->origin_x, stackheight);
-      int jj = gameToSceneY(my_move->origin_y, stackheight);
-      
-      image.load(":/images/from_shade.png");
-      item = this->addPixmap(image);
-      item->setPos(ii, jj);
-   }
 
    // Draw the TO markers
    vector<vector<int> > targets;
@@ -111,16 +90,51 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
          game->buried_tiles(targets[kk][0], targets[kk][1], kind, color);
          int stackheight = color.size();
       
-         int ii = gameToSceneX(targets[kk][0], stackheight);
-         int jj = gameToSceneY(targets[kk][1], stackheight);
+         int ii = gameToSceneX(targets[kk][0], targets[kk][1], stackheight);
+         int jj = gameToSceneY(targets[kk][0], targets[kk][1], stackheight);
          
          image.load(":/images/to_shade.png");
          item = this->addPixmap(image);
          item->setPos(ii, jj);
-
       }
    }
    game->clear_2d_vector(targets);
+
+   // Draw the pieces on the board
+   for(int ii=xmin; ii<=xmax; ii++) {
+      for(int jj=ymin; jj<=ymax; jj++) {
+         
+         vector<type> kind;
+         vector<bool> color;
+         game->buried_tiles(ii, jj, kind, color);
+         int kk;
+         for(kk=0; kk<int(kind.size()); kk++) {
+            draw_single_piece(gameToSceneX(ii, jj, kk), gameToSceneY(ii, jj, kk), 
+                              kind[kk], color[kk]);
+         }
+         draw_single_piece(gameToSceneX(ii, jj, kk), gameToSceneY(ii, jj, kk), 
+                     game->get_tile_type(ii, jj), game->get_tile_color(ii, jj));
+
+      }
+   }
+   
+   // Draw the FROM marker
+   if(  my_move->origin_selected &&
+        my_move->origin_type == empty) {
+      
+      // Figure out the height of the stack
+      vector<type> kind;
+      vector<bool> color;
+      game->buried_tiles(my_move->origin_x, my_move->origin_y, kind, color);
+      int stackheight = color.size();
+   
+      int ii = gameToSceneX(my_move->origin_x, my_move->origin_y, stackheight);
+      int jj = gameToSceneY(my_move->origin_x, my_move->origin_y, stackheight);
+      
+      image.load(":/images/from_shade.png");
+      item = this->addPixmap(image);
+      item->setPos(ii, jj);
+   }
    
    this->update();
 }
