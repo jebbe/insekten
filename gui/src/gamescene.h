@@ -2,6 +2,7 @@
 #define gamescene_h 
 
 #include <QtGui>
+#include <vector>
 
 #include "ai.h"
 #include "common.h"
@@ -24,6 +25,11 @@ public:
    GameScene(QObject *parent = 0);
 
    void redraw(ai *game, uiMove *my_move);
+
+private:
+   void draw_single_piece(int xx, int yy, type kind, bool color);
+   int gameToSceneX(int xx, int stackheight);
+   int gameToSceneY(int yy, int stackheight);
 
 };
 

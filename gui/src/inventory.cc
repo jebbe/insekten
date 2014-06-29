@@ -15,30 +15,37 @@ type InventoryScene::clicked_what(ai* game, double xx, double yy) {
    if(xx<0 || xx>WIDTH) return empty;
    
    int jj = int(yy+YSHIFT)/(HEIGHT+2*YSHIFT);
-   if(jj == 0) return queen;
-   if(jj == 1) return ant;
-   if(jj == 2) return spider;
-   if(jj == 3) return cricket;
-   if(jj == 4) return beetle;
+   if(jj == 0 && game->in_stock(queen, my_color)>0) return queen;
+   if(jj == 1 && game->in_stock(ant, my_color)>0) return ant;
+   if(jj == 2 && game->in_stock(spider, my_color)>0) return spider;
+   if(jj == 3 && game->in_stock(cricket, my_color)>0) return cricket;
+   if(jj == 4 && game->in_stock(beetle, my_color)>0) return beetle;
    if(jj == 5) {
-      if((game->our_rules() & l) == l) return ladybug;
-      if((game->our_rules() & m) == m) return mosquito;
-      if((game->our_rules() & p) == p) return pillbug;
+      if((game->our_rules() & l) == l && 
+          game->in_stock(ladybug, my_color)>0) return ladybug;
+      if((game->our_rules() & m) == m && 
+          game->in_stock(mosquito, my_color)>0) return mosquito;
+      if((game->our_rules() & p) == p && 
+          game->in_stock(pillbug, my_color)>0) return pillbug;
    }
    if(jj == 6) {
       if((game->our_rules() & l) == l &&
-         (game->our_rules() & m) == m) return mosquito;
+         (game->our_rules() & m) == m && 
+          game->in_stock(mosquito, my_color)>0) return mosquito;
       if((game->our_rules() & l) != l &&
          (game->our_rules() & m) == m &&
-         (game->our_rules() & p) == p) return pillbug;
+         (game->our_rules() & p) == p && 
+          game->in_stock(pillbug, my_color)>0) return pillbug;
       if((game->our_rules() & l) == l &&
          (game->our_rules() & m) != m &&
-         (game->our_rules() & p) == p) return pillbug;
+         (game->our_rules() & p) == p && 
+          game->in_stock(pillbug, my_color)>0) return pillbug;
    }
    if(jj == 7) {
       if((game->our_rules() & l) == l &&
          (game->our_rules() & m) == m &&
-         (game->our_rules() & p) == p) return pillbug;
+         (game->our_rules() & p) == p && 
+          game->in_stock(pillbug, my_color)>0) return pillbug;
    }
 
    return empty;
@@ -48,7 +55,7 @@ type InventoryScene::clicked_what(ai* game, double xx, double yy) {
 
 void InventoryScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
 
-   if(me->button() == Qt::RightButton) {
+   if(me->button() != Qt::LeftButton) {
       emit click_abort();
    } else if(me->button() == Qt::LeftButton) {
       QPointF where = me->scenePos();

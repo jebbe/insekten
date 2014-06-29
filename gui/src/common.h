@@ -21,7 +21,7 @@ typedef struct {
    bool origin_selected;
    type origin_type;
    bool origin_color;
-   int origin_x;
+   int origin_x; // In game (not scene) notation
    int origin_y;
    bool dest_selected;
    bool dest_color;
