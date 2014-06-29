@@ -10,10 +10,6 @@ class InventoryScene : public QGraphicsScene {
    
    Q_OBJECT
 
-// signals:
-//    
-//    void clicked();
-
 signals:
    
    void clicked_piece(int xx, int yy);

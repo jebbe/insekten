@@ -1,5 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file>images/welcome.png</file>
     <file>images/white_queen.png</file>
     <file>images/black_queen.png</file>
     <file>images/white_ant.png</file>

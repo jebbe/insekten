@@ -40,8 +40,12 @@ MainWindow::MainWindow() {
            this, SLOT(resetClicked()));
    
    sceneMain = new GameScene(this);
-   sceneMain->setSceneRect(QRectF(-4000, -4000, 4000, 4000));
+   sceneMain->setSceneRect(QRectF(0, 0, MAIN_SIZE, MAIN_SIZE));
    viewMain = new QGraphicsView(sceneMain);
+   connect(sceneMain, SIGNAL(clicked_piece(int, int)), 
+           this, SLOT(mainOriginSelected(int, int)));
+   connect(sceneMain, SIGNAL(click_abort()), 
+           this, SLOT(resetClicked()));
    
    QHBoxLayout *layout = new QHBoxLayout;
    viewWhite->setMinimumSize(WIDTH+8+2*XSHIFT, 0);
@@ -144,6 +148,9 @@ void MainWindow::newGame() {
 
 
 void MainWindow::undoMove() {
+
+   if(!game_active) return;
+
    if(newgamedialog_open) return;
    QMessageBox::about(this, tr("Undo"),
                       tr("Undo placeholder." ));
@@ -204,6 +211,10 @@ void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
    if(!game_active) return;
    
    type kind = sceneWhite->clicked_what(game, xx, yy);
+   if(kind == empty) {
+      resetClicked();
+      return;
+   }
    
    my_move->origin_selected = true;
    my_move->origin_type = kind;
@@ -221,6 +232,10 @@ void MainWindow::blackInventoryOriginSelected(int xx, int yy) {
    if(!game_active) return;
 
    type kind = sceneBlack->clicked_what(game, xx, yy);
+   if(kind == empty) {
+      resetClicked();
+      return;
+   }
 
    my_move->origin_selected = true;
    my_move->origin_type = kind;

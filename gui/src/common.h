@@ -12,8 +12,10 @@ const int SPACING = 41;
 // How do we stack the pieces?
 const int XSHIFT = 3;
 const int YSHIFT = 3;
-// Should be determined automatically depending on the rules:
+// Maximum number of pieces
 const int NO_PIECES = 8;
+// How large is the central widget scene?
+const int MAIN_SIZE = 2000;
 
 typedef struct {
    bool origin_selected;
