@@ -129,7 +129,7 @@ void piece::find_moves_spider(vector<turn*> &turns) {
 void piece::find_moves_cricket(vector<turn*> &turns) {
    for(int ii=0; ii<6; ii++) {
       board* it;
-      if(at->nbr[ii]->ontop != 0) {
+      if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true)) {
          it = at->nbr[ii];
          while(it->ontop != 0) it = it->nbr[ii];
          turns.push_back(new turn(at, it));
