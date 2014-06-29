@@ -131,8 +131,12 @@ void piece::find_moves_cricket(vector<turn*> &turns) {
       board* it;
       if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true))) {
          it = at->nbr[ii];
-         while(it->ontop != 0) it = it->nbr[ii];
-         turns.push_back(new turn(at, it));
+         bool new_move = true;
+         while(it->ontop != 0) {
+            if(it->impass_high_lvl(ii, true)) new_move = false;
+            it = it->nbr[ii];
+         }
+         if(new_move) turns.push_back(new turn(at, it));
       }
    }
 }
