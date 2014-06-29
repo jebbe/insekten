@@ -3,37 +3,46 @@
 
 #include "mainwindow.h"
 
+//////////////////////////////
+// CREATING THE MAIN WINDOW //
+//////////////////////////////
+
 MainWindow::MainWindow() {
    
    game_active = false;
+   newgamedialog_open = false;
+   my_move = new uiMove;
+   my_move->origin_selected = false;
+   my_move->dest_selected = false;
    
    createActions();
    createMenu();
+   createToolbar();
 
    sceneWhite = new InventoryScene(false, this);
    sceneWhite->setSceneRect(QRectF(-XSHIFT, 0, WIDTH, NO_PIECES*(HEIGHT+2*YSHIFT)));
    viewWhite = new QGraphicsView(sceneWhite);
    viewWhite->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    viewWhite->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   connect(sceneWhite, SIGNAL(clicked_piece(int, int)), 
+           this, SLOT(whiteInventoryOriginSelected(int, int)));
+   connect(sceneWhite, SIGNAL(click_abort()), 
+           this, SLOT(resetClicked()));
    
    sceneBlack = new InventoryScene(true, this);
    sceneBlack->setSceneRect(QRectF(-XSHIFT, 0, WIDTH, NO_PIECES*(HEIGHT+2*YSHIFT)));
    viewBlack = new QGraphicsView(sceneBlack);
    viewBlack->setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
    viewBlack->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
+   connect(sceneBlack, SIGNAL(clicked_piece(int, int)), 
+           this, SLOT(blackInventoryOriginSelected(int, int)));
+   connect(sceneBlack, SIGNAL(click_abort()), 
+           this, SLOT(resetClicked()));
    
    sceneMain = new GameScene(this);
    sceneMain->setSceneRect(QRectF(-4000, -4000, 4000, 4000));
    viewMain = new QGraphicsView(sceneMain);
-//     connect(scene, SIGNAL(itemInserted(DiagramItem*)),
-//             this, SLOT(itemInserted(DiagramItem*)));
-//     connect(scene, SIGNAL(textInserted(QGraphicsTextItem*)),
-//         this, SLOT(textInserted(QGraphicsTextItem*)));
-//     connect(scene, SIGNAL(itemSelected(QGraphicsItem*)),
-//         this, SLOT(itemSelected(QGraphicsItem*)));
-
-   createToolbar();
-
+   
    QHBoxLayout *layout = new QHBoxLayout;
    viewWhite->setMinimumSize(WIDTH+8+2*XSHIFT, 0);
    viewBlack->setMinimumSize(WIDTH+8+2*XSHIFT, 0);
@@ -49,6 +58,9 @@ MainWindow::MainWindow() {
    setUnifiedTitleAndToolBarOnMac(true);
 }
 
+MainWindow::~MainWindow() {
+   delete my_move;
+}
 
 // void MainWindow::createInventories() {
 //    
@@ -102,50 +114,62 @@ void MainWindow::createMenu() {
 
 
 void MainWindow::createToolbar() {
-    myToolBar = addToolBar(tr("Tools"));
-    myToolBar->addAction(newGameAction);
-    myToolBar->addAction(undoAction);
+   myToolBar = addToolBar(tr("Tools"));
+   myToolBar->addAction(newGameAction);
+   myToolBar->addAction(undoAction);
 }
 
+//////////////////////////////////
+// ACTIONS FROM THE MAIN WINDOW //
+//////////////////////////////////
 
 void MainWindow::about() {
-    QMessageBox::about(this, tr("About Hive"),
-                       tr("This is <i>Hive</i>. "
-                          "Imagine some witty info text here." ));
+   QMessageBox::about(this, tr("About Hive"),
+                      tr("This is <i>Hive</i>. "
+                         "Imagine some witty info text here." ));
 }
 
 
 void MainWindow::newGame() {
+   if(newgamedialog_open) return;
+   newgamedialog_open = true;
    newgamedialog = new QDialog(this);
    ui = new Ui::NewGame;
    ui->setupUi(newgamedialog);
    newgamedialog->setFixedSize(270,308); 
    newgamedialog->show();
    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(beginGame()));
-   connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(beginGame()));
+   connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(abortBeginGame()));
 }
 
 
 void MainWindow::undoMove() {
-    QMessageBox::about(this, tr("Undo"),
-                       tr("Undo placeholder." ));
+   if(newgamedialog_open) return;
+   QMessageBox::about(this, tr("Undo"),
+                      tr("Undo placeholder." ));
 }
 
+/////////////////////////
+// CREATING A NEW GAME //
+/////////////////////////
 
 void MainWindow::abortBeginGame() {
    newgamedialog->close();
+   newgamedialog_open = false;
    delete newgamedialog;
    delete ui;
 }
 
 
 void MainWindow::beginGame() {
+   // Clear the running game
    if(game_active) {
-      // Clear the running game
       delete game;
    }
+   my_move->origin_selected = false;
+   my_move->dest_selected = false;
 
-   // Setup a new game
+   // Set up a new game
    game_active = true;
    int my_rules = 0;
    my_rules += (int(ui->mosquito_check->isChecked()));
@@ -160,9 +184,91 @@ void MainWindow::beginGame() {
    
    // Clear the new game dialog
    newgamedialog->close();
+   newgamedialog_open = false;
    delete newgamedialog;
    delete ui;
+   
+   // Set up the main display and inventories
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+   
 }
+
+/////////////////////////////
+// PLAYING THE ACTUAL GAME //
+/////////////////////////////
+
+void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
+   
+   if(!game_active) return;
+   
+   type kind = sceneWhite->clicked_what(game, xx, yy);
+   
+   my_move->origin_selected = true;
+   my_move->origin_type = kind;
+   my_move->origin_color = false;
+   my_move->dest_selected = false;
+
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+}
+
+
+void MainWindow::blackInventoryOriginSelected(int xx, int yy) {
+   
+   if(!game_active) return;
+
+   type kind = sceneBlack->clicked_what(game, xx, yy);
+
+   my_move->origin_selected = true;
+   my_move->origin_type = kind;
+   my_move->origin_color = true;
+   my_move->dest_selected = false;
+
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+}
+
+
+void MainWindow::resetClicked() {
+
+   if(!game_active) return;
+   
+   my_move->origin_selected = false;
+   my_move->dest_selected = false;
+   
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+}
+
+
+void MainWindow::mainOriginSelected(int xx, int yy) {
+   
+   if(!game_active) return;
+   
+   // TODO
+   
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+}
+
+
+void MainWindow::mainDestSelected(int xx, int yy) {
+   
+   if(!game_active) return;
+   
+   // TODO
+   
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+}
+
 
 #endif
  

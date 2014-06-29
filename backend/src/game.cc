@@ -315,6 +315,10 @@ bool game::is_draw() {
            (no_legal_move(false) && no_legal_move(true)));
 }
 
+ruleset game::our_rules() {
+   return rules;
+}
+
 vector<vector<int>> game::can_move_to(int xx, int yy) {
    vector<vector<int>> targets;
    board* it = my_board;

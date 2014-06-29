@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow {
 
 public:
    MainWindow();
+   ~MainWindow();
 
 private slots:
    
@@ -26,7 +27,13 @@ private slots:
    
    void beginGame();
    void abortBeginGame();
-
+   
+   void whiteInventoryOriginSelected(int xx, int yy);
+   void blackInventoryOriginSelected(int xx, int yy);
+   void resetClicked();
+   void mainOriginSelected(int xx, int yy);
+   void mainDestSelected(int xx, int yy);
+   
 private:
    
    bool game_active;
@@ -62,7 +69,9 @@ private:
 
    QDialog *newgamedialog;
    Ui::NewGame *ui;
+   bool newgamedialog_open;
    
+   uiMove *my_move;
 };
 
 #endif

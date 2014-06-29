@@ -7,5 +7,9 @@ GameScene::GameScene(QObject *parent) {
    
 }
 
+void GameScene::redraw(ai *game, uiMove *my_move) {
+   
+}
+
 #endif
  

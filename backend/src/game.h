@@ -101,6 +101,7 @@ public:
    bool white_wins();
    bool black_wins();
    bool is_draw();
+   ruleset our_rules();
    
    // Figure out where a certain pieces can move and where we can place new
    // pieces. Returns a vector containing x- and y-coordinates of the tiles.
