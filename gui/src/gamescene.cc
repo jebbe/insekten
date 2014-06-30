@@ -26,19 +26,30 @@ void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
    }
 }
 
+
+bool GameScene::clicked_is_outside(ai *game, double xx, double yy) {
+   return false;
+}
+
 ////////////////////////////////
 // COORDINATE TRANSFORMATIONS //
 ////////////////////////////////
 
 int GameScene::SceneToGameX(int xx, int yy) {
-   // TODO
-   return 1000;
+   int ii = xx - MAIN_SIZE/2 + WIDTH/2;
+   if(ii<0) ii = (ii * 2) / (WIDTH + SPACING) - 1;
+   else ii = (ii * 2) / (WIDTH + SPACING);
+   return ii;
 }
 
 
 int GameScene::SceneToGameY(int xx, int yy) {
-   // TODO
-   return 1000;
+   int jj = yy - MAIN_SIZE/2 + WIDTH/2;
+   int ii = SceneToGameX(xx, yy);
+   jj = jj + ii*HEIGHT/2;
+   if(jj>0) jj = jj / HEIGHT;
+   else jj = jj/HEIGHT - 1;
+   return jj;
 }
 
 
@@ -77,7 +88,8 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    if(my_move->origin_selected) {
       
       if(my_move->origin_type != empty) {
-         targets = game->can_place_at();
+         if(!game->need_to_place_queen() || my_move->origin_type == queen)
+            targets = game->can_place_at();
       } else {
          targets = game->can_move_to(my_move->origin_x, my_move->origin_y);
       }

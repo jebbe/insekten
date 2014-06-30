@@ -301,7 +301,7 @@ bool game::game_over() {
 }
 
 bool game::white_wins() {
-   return ((queen_surrounded(true) && !queen_surrounded(false)) ||
+   return ((queen_surrounded(false) && !queen_surrounded(true)) ||
            (no_legal_move(true) && !no_legal_move(false)));
 }
 
@@ -319,8 +319,18 @@ ruleset game::our_rules() {
    return rules;
 }
 
+bool game::need_to_place_queen() {
+   return (half_turns > 5 && stock[whose_turn()][queen] == 1);
+
+}
+
 vector<vector<int>> game::can_move_to(int xx, int yy) {
+   
    vector<vector<int>> targets;
+   
+   // Have we already queen, ie can we move at all?
+   if(stock[whose_turn()][queen] == 1) return targets;
+   
    board* it = my_board;
    board* started = my_board;
    do {
@@ -355,12 +365,13 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
 }
 
 vector<vector<int> > game::can_place_at() {
+
    vector<vector<int> > targets;
    vector<board*> tiles;
    find_placeable_tiles(whose_turn(), tiles);
+
    for(uint ii=0; ii<tiles.size(); ii++) {
-      vector<int> coords = {tiles[ii]->xx, 
-                            tiles[ii]->yy};
+      vector<int> coords = {tiles[ii]->xx, tiles[ii]->yy};
       targets.push_back(coords);
    }
    return targets;

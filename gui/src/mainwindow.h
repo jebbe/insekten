@@ -31,8 +31,7 @@ private slots:
    void whiteInventoryOriginSelected(int xx, int yy);
    void blackInventoryOriginSelected(int xx, int yy);
    void resetClicked();
-   void mainOriginSelected(int xx, int yy);
-   void mainDestSelected(int xx, int yy);
+   void mainPieceSelected(int xx, int yy);
    
 private:
    

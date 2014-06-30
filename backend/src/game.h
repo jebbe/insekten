@@ -94,6 +94,7 @@ public:
    type get_tile_type(int xx, int yy);
    bool get_tile_color(int xx, int yy);
    int in_stock(type kind, bool color);
+   bool need_to_place_queen();
    bool whose_turn();
    bool buried_tiles(int xx, int yy, vector<type> &kind, vector<bool> &color);
    bool buried_tiles(int xx, int yy);

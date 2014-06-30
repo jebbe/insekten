@@ -26,10 +26,13 @@ public:
 
    void redraw(ai *game, uiMove *my_move);
 
-private:
-   void draw_single_piece(int xx, int yy, type kind, bool color);
+   bool clicked_is_outside(ai *game, double xx, double yy);
+
    int SceneToGameX(int xx, int yy);
    int SceneToGameY(int xx, int yy);
+
+private:
+   void draw_single_piece(int xx, int yy, type kind, bool color);
    int gameToSceneX(int xx, int yy, int stackheight);
    int gameToSceneY(int xx, int yy, int stackheight);
 

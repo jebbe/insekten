@@ -43,7 +43,7 @@ MainWindow::MainWindow() {
    sceneMain->setSceneRect(QRectF(0, 0, MAIN_SIZE, MAIN_SIZE));
    viewMain = new QGraphicsView(sceneMain);
    connect(sceneMain, SIGNAL(clicked_piece(int, int)), 
-           this, SLOT(mainOriginSelected(int, int)));
+           this, SLOT(mainPieceSelected(int, int)));
    connect(sceneMain, SIGNAL(click_abort()), 
            this, SLOT(resetClicked()));
    
@@ -184,23 +184,6 @@ void MainWindow::beginGame() {
    my_rules += (4*int(ui->pillbug_check->isChecked()));
    game = new ai(ruleset(my_rules));
 
-   
-   game->place(queen, 0, 0);
-   game->place(queen, 0, 1);
-   game->place(ant, 0, -1);
-   game->place(ant, 0, 2);
-   game->move(0, -1, -1, 0);
-   game->move(0, 2, 1, 1);
-   game->place(beetle, -1, -1);
-   game->place(beetle, 1, 2);
-   game->move(-1, -1, -1, 0);
-   game->move(1, 2, 1, 1);
-   game->place(beetle, 0, -1);
-   game->place(cricket, 0, 2);
-   game->move(0, -1, 0, 0);
-   game->place(cricket, 0, 3);
-
-   
    white_human = ui->white_human->isChecked();
    black_human = ui->black_human->isChecked();
    white_level = ui->white_level->value();
@@ -288,23 +271,75 @@ void MainWindow::resetClicked() {
 }
 
 
-void MainWindow::mainOriginSelected(int xx, int yy) {
+void MainWindow::mainPieceSelected(int xx, int yy) {
    
    if(!game_active) return;
    
-   // TODO
+   // Figure out what color (or empty tile) we clicked on
+   int ii = sceneMain->SceneToGameX(xx, yy);
+   int jj = sceneMain->SceneToGameY(xx, yy);
    
-   sceneWhite->redraw(game, my_move);
-   sceneBlack->redraw(game, my_move);
-   sceneMain->redraw(game, my_move);
-}
+   type kind = game->get_tile_type(ii, jj);
+   bool color = game->get_tile_color(ii, jj);
+   
+   if(kind == empty) {
+      
+      // We are finishing up a move
+      
+      if(my_move->origin_selected == false) {
+         resetClicked();
+         return;
+      }
+      
+      if(my_move->origin_type == empty) {
+         // We're moving a tile
+         game->move(my_move->origin_x, my_move->origin_y, ii, jj);
+         resetClicked();
+     } else {
+         // We're placing a new tile
+         game->place(my_move->origin_type, ii, jj);
+         resetClicked();
+      }
+      
+      if(game->game_over()) {
+         if(game->white_wins()) {
+            QMessageBox::about(this, tr("Game over"),
+                         tr("White wins!" ));
+         } else if(game->black_wins()) {
+            QMessageBox::about(this, tr("Game over"),
+                         tr("Black wins!" ));
+         } else if(game->is_draw()) {
+            QMessageBox::about(this, tr("Game over"),
+                         tr("Draw." ));
+         } else {
+            QMessageBox::about(this, tr("Game over"),
+                         tr("Game over, but nobody wins, and no draw. Probably a bug." ));
+         }
+         game_active = false;
+      }
+      
+   } else {
+      
+      // We're initiating a move
 
+      if(my_move->origin_selected == true) {
+         resetClicked();
+         return;
+      }
 
-void MainWindow::mainDestSelected(int xx, int yy) {
-   
-   if(!game_active) return;
-   
-   // TODO
+      if(game->whose_turn() != color) {
+         resetClicked();
+         return;
+      }
+      
+      my_move->origin_selected = true;
+      my_move->origin_type = empty;
+      my_move->origin_color = color;
+      my_move->origin_x = ii;
+      my_move->origin_y = jj;
+      my_move->dest_selected = false;
+      
+   }
    
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
