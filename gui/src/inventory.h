@@ -2,6 +2,9 @@
 #define inventory_h 
 
 #include <QtGui>
+#include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPixmapItem>
 
 #include "ai.h"
 #include "common.h"

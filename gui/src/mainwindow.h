@@ -1,9 +1,12 @@
 #ifndef mainwindow_h 
 #define mainwindow_h
 
-#include <QMainWindow>
 #include <QtGui>
-//#include <QLabel>
+#include <QMainWindow>
+#include <QGraphicsView>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QMessageBox>
 
 #include "ai.h"
 #include "gamescene.h"

@@ -74,10 +74,10 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved) {
 }
 
 void piece::remove_duplicate_moves(vector<turn*> &turns) {
-   vector<uint> duplicates;
+   vector<unsigned int> duplicates;
    at->set_not_visited();
-   for(uint ii=0; ii<turns.size(); ii++) {
-      for(uint jj=ii+1; jj<turns.size(); jj++) {
+   for(unsigned int ii=0; ii<turns.size(); ii++) {
+      for(unsigned int jj=ii+1; jj<turns.size(); jj++) {
          if( turns[ii]->from == turns[jj]->from &&
              turns[ii]->to == turns[jj]->to &&
              turns[ii]->kind == turns[jj]->kind ) {

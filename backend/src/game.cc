@@ -36,8 +36,8 @@ game::game(ruleset rules) {
 }
 
 game::~game() {
-   for(uint ii=0; ii<turns.size(); ii++) delete turns[ii];
-   for(uint ii=0; ii<history.size(); ii++) delete history[ii];
+   for(unsigned int ii=0; ii<turns.size(); ii++) delete turns[ii];
+   for(unsigned int ii=0; ii<history.size(); ii++) delete history[ii];
    my_board->delete_all();
 }
 
@@ -91,7 +91,7 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
 
 void game::find_all_moves(bool color, vector<turn*> &turns) {
    
-   for(uint ii=0; ii<turns.size(); ii++) delete turns[ii];
+   for(unsigned int ii=0; ii<turns.size(); ii++) delete turns[ii];
    turns.clear();
    
    // Where can I place pieces?
@@ -100,14 +100,14 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
    
    // Do we have to place the queen bee?
    if(half_turns > 5 && stock[int(color)][queen] == 1) {
-      for(uint ii=0; ii<tiles.size(); ii++) {
+      for(unsigned int ii=0; ii<tiles.size(); ii++) {
          turns.push_back(new turn(queen, color, tiles[ii]));
       }
       return;
    }
    
    // Find all possible placements
-   for(uint ii=0; ii<tiles.size(); ii++) {
+   for(int ii=0; ii<tiles.size(); ii++) {
       for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
          if(stock[int(color)][int(kind)] > 0) {
             turns.push_back(new turn((type)kind, color, tiles[ii]));
@@ -355,7 +355,7 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
             }
          }
 
-         for(uint ii=0; ii<turns.size(); ii++) {
+         for(unsigned int ii=0; ii<turns.size(); ii++) {
             vector<int> coords = {turns[ii]->to->xx, 
                                   turns[ii]->to->yy};
             targets.push_back(coords);
@@ -373,7 +373,7 @@ vector<vector<int> > game::can_place_at() {
    vector<board*> tiles;
    find_placeable_tiles(whose_turn(), tiles);
 
-   for(uint ii=0; ii<tiles.size(); ii++) {
+   for(unsigned int ii=0; ii<tiles.size(); ii++) {
       vector<int> coords = {tiles[ii]->xx, tiles[ii]->yy};
       targets.push_back(coords);
    }
@@ -381,7 +381,7 @@ vector<vector<int> > game::can_place_at() {
 }
 
 void game::clear_2d_vector(vector<vector<int>> to_clear) {
-   for(uint ii=0; ii<to_clear.size(); ii++) {
+   for(unsigned int ii=0; ii<to_clear.size(); ii++) {
       to_clear[ii].clear();
    }
    to_clear.clear();
@@ -413,7 +413,7 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
          }
          
          // Figure out what tile we move to
-         for(uint ii=0; ii<turns.size(); ii++) {
+         for(unsigned int ii=0; ii<turns.size(); ii++) {
             if(   turns[ii]->from->xx == x_from && 
                   turns[ii]->from->yy == y_from && 
                   turns[ii]->to->xx == x_to && 
@@ -443,7 +443,7 @@ bool game::place(type kind, int x_to, int y_to) {
    // Figure out which tile we want to place the piece at
    vector<board*> tiles;
    find_placeable_tiles(whose_turn(), tiles);
-   for(uint ii=0; ii<tiles.size(); ii++) {
+   for(unsigned int ii=0; ii<tiles.size(); ii++) {
       if(tiles[ii]->xx == x_to && tiles[ii]->yy == y_to) {
          turn* my_turn = new turn(kind, whose_turn(), tiles[ii]);
          perform_move(my_turn);

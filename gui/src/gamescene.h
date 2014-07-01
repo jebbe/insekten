@@ -2,13 +2,16 @@
 #define gamescene_h 
 
 #include <QtGui>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+
 #include <vector>
 
 #include "ai.h"
 #include "common.h"
 
-class GameScene : public QGraphicsScene
-{
+class GameScene : public QGraphicsScene {
     Q_OBJECT
 
 signals:
