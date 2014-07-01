@@ -282,14 +282,9 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
    type kind = game->get_tile_type(ii, jj);
    bool color = game->get_tile_color(ii, jj);
    
-   if(kind == empty) {
+   if(my_move->origin_selected == true) {
       
       // We are finishing up a move
-      
-      if(my_move->origin_selected == false) {
-         resetClicked();
-         return;
-      }
       
       if(my_move->origin_type == empty) {
          // We're moving a tile
@@ -322,12 +317,7 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
       
       // We're initiating a move
 
-      if(my_move->origin_selected == true) {
-         resetClicked();
-         return;
-      }
-
-      if(game->whose_turn() != color) {
+      if(game->can_move_to(ii, jj).size() == 0) {
          resetClicked();
          return;
       }

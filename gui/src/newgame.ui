@@ -246,6 +246,9 @@
        <property name="text">
         <string>Mosquito</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QCheckBox" name="ladybug_check">
        <property name="geometry">
@@ -264,6 +267,9 @@
        <property name="text">
         <string>Ladybug</string>
        </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QCheckBox" name="pillbug_check">
        <property name="geometry">
@@ -281,6 +287,9 @@
        </property>
        <property name="text">
         <string>Pillbug</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>

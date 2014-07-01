@@ -83,7 +83,7 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    int xmax = game->x_max();
    int ymax = game->y_max();
 
-   // Draw the TO markers
+   // Draw the TO markers on empty tiles
    vector<vector<int> > targets;
    if(my_move->origin_selected) {
       
@@ -96,21 +96,15 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    
       for(int kk=0; kk<int(targets.size()); kk++) {
          
-         // Figure out the height of the stack
-         vector<type> kind;
-         vector<bool> color;
-         game->buried_tiles(targets[kk][0], targets[kk][1], kind, color);
-         int stackheight = color.size();
-      
-         int ii = gameToSceneX(targets[kk][0], targets[kk][1], stackheight);
-         int jj = gameToSceneY(targets[kk][0], targets[kk][1], stackheight);
-         
-         image.load(":/images/to_shade.png");
-         item = this->addPixmap(image);
-         item->setPos(ii, jj);
+         if(game->get_tile_type(targets[kk][0], targets[kk][1]) == empty) {
+            int ii = gameToSceneX(targets[kk][0], targets[kk][1], 0);
+            int jj = gameToSceneY(targets[kk][0], targets[kk][1], 0);
+            image.load(":/images/to_shade.png");
+            item = this->addPixmap(image);
+            item->setPos(ii, jj);
+         }
       }
    }
-   game->clear_2d_vector(targets);
 
    // Draw the pieces on the board
    for(int ii=xmin; ii<=xmax; ii++) {
@@ -147,7 +141,29 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
       item = this->addPixmap(image);
       item->setPos(ii, jj);
    }
-   
+
+   // Draw the TO markers on occupied tiles
+   if(my_move->origin_selected) {
+      
+      for(int kk=0; kk<int(targets.size()); kk++) {
+         
+         // Figure out the height of the stack
+         vector<type> kind;
+         vector<bool> color;
+         game->buried_tiles(targets[kk][0], targets[kk][1], kind, color);
+         int stackheight = color.size();
+         
+         if(game->get_tile_type(targets[kk][0], targets[kk][1]) != empty) {
+            int ii = gameToSceneX(targets[kk][0], targets[kk][1], stackheight);
+            int jj = gameToSceneY(targets[kk][0], targets[kk][1], stackheight);
+            image.load(":/images/to_shade.png");
+            item = this->addPixmap(image);
+            item->setPos(ii, jj);
+         }
+      }
+   }
+   game->clear_2d_vector(targets);
+
    this->update();
 }
 

@@ -133,7 +133,7 @@ void piece::find_moves_cricket(vector<turn*> &turns) {
          it = at->nbr[ii];
          bool new_move = true;
          while(it->ontop != 0) {
-            if(it->impass_high_lvl(ii, true)) new_move = false;
+            if(it->impass_high_lvl(ii, false)) new_move = false;
             it = it->nbr[ii];
          }
          if(new_move) turns.push_back(new turn(at, it));
@@ -142,10 +142,20 @@ void piece::find_moves_cricket(vector<turn*> &turns) {
 }
 
 void piece::find_moves_beetle(vector<turn*> &turns) {
-   find_moves_queen(turns);
-   for(int ii=0; ii<6; ii++) {
-      if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true))) {
-         turns.push_back(new turn(at, at->nbr[ii]));
+   if(at->ontop == this) {
+      // We're not on top of somebody else
+      find_moves_queen(turns);
+      for(int ii=0; ii<6; ii++) {
+         if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true))) {
+            turns.push_back(new turn(at, at->nbr[ii]));
+         }
+      }
+   } else {
+      // We're on top of somebody else
+      for(int ii=0; ii<6; ii++) {
+         if(!(at->impass_high_lvl(ii, true))) {
+            turns.push_back(new turn(at, at->nbr[ii]));
+         }
       }
    }
 }

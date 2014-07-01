@@ -71,10 +71,13 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
       if(it->ontop == 0) {
          bool can_place = true;
          for(int ii=0; ii<6; ii++) {
-            if(it->nbr[ii] != 0 && it->nbr[ii]->ontop !=0 &&
-                  it->nbr[ii]->ontop->color != color) {
-               can_place = false;
-               break;
+            if(it->nbr[ii] != 0 && it->nbr[ii]->ontop !=0) {
+               piece *mp = it->nbr[ii]->ontop;
+               while(mp->ontop != 0) mp = mp->ontop;
+               if(mp->color != color) {
+                  can_place = false;
+                  break;
+               }
             }
          }
          if(can_place) {
@@ -336,10 +339,10 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
    do {
       if(it->xx == xx && it->yy == yy) {
          if(it->ontop == 0) return targets;
-         if(whose_turn() != it->ontop->color) return targets;
-         vector<turn*> turns;
-         piece *mp = it->ontop;
+         piece* mp = it->ontop;
          while(mp->ontop != 0) mp = mp->ontop;
+         if(whose_turn() != mp->color) return targets;
+         vector<turn*> turns;
          mp->list_moves(turns, just_moved);
 
          // Account for the possibility that the pillbug moves us around
@@ -348,7 +351,7 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
                   it->nbr[ii]->ontop != 0 && 
                   it->nbr[ii]->ontop->kind == pillbug && 
                   it->nbr[ii]->ontop->color == whose_turn()) {
-                  it->nbr[ii]->ontop->list_moves(turns, just_moved);
+               it->nbr[ii]->ontop->list_moves(turns, just_moved);
             }
          }
 
@@ -405,7 +408,7 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
                   it->nbr[ii]->ontop != 0 && 
                   it->nbr[ii]->ontop->kind == pillbug && 
                   it->nbr[ii]->ontop->color == whose_turn()) {
-                  it->nbr[ii]->ontop->list_moves(turns, just_moved);
+               it->nbr[ii]->ontop->list_moves(turns, just_moved);
             }
          }
          
