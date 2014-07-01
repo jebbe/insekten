@@ -271,6 +271,21 @@ void MainWindow::resetClicked() {
 }
 
 
+void MainWindow::initiateMove(int ii, int jj, bool color) {
+   if(game->can_move_to(ii, jj).size() == 0) {
+      resetClicked();
+      return;
+   }
+   
+   my_move->origin_selected = true;
+   my_move->origin_type = empty;
+   my_move->origin_color = color;
+   my_move->origin_x = ii;
+   my_move->origin_y = jj;
+   my_move->dest_selected = false;
+}
+
+
 void MainWindow::mainPieceSelected(int xx, int yy) {
    
    if(!game_active) return;
@@ -287,15 +302,23 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
       // We are finishing up a move
       
       if(my_move->origin_type == empty) {
+         
          // We're moving a tile
-         game->move(my_move->origin_x, my_move->origin_y, ii, jj);
-         resetClicked();
+         
+         if(!game->move(my_move->origin_x, my_move->origin_y, ii, jj)) {
+            // Couldn't move; initiate another move instead
+            initiateMove(ii, jj, color);
+         } else {
+            resetClicked();
+         }
+         
      } else {
          // We're placing a new tile
          game->place(my_move->origin_type, ii, jj);
          resetClicked();
       }
       
+      // Are we done?
       if(game->game_over()) {
          if(game->white_wins()) {
             QMessageBox::about(this, tr("Game over"),
@@ -314,21 +337,8 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
       }
       
    } else {
-      
       // We're initiating a move
-
-      if(game->can_move_to(ii, jj).size() == 0) {
-         resetClicked();
-         return;
-      }
-      
-      my_move->origin_selected = true;
-      my_move->origin_type = empty;
-      my_move->origin_color = color;
-      my_move->origin_x = ii;
-      my_move->origin_y = jj;
-      my_move->dest_selected = false;
-      
+      initiateMove(ii, jj, color);
    }
    
    sceneWhite->redraw(game, my_move);

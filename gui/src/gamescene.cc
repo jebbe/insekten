@@ -123,24 +123,6 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
 
       }
    }
-   
-   // Draw the FROM marker
-   if(  my_move->origin_selected &&
-        my_move->origin_type == empty) {
-      
-      // Figure out the height of the stack
-      vector<type> kind;
-      vector<bool> color;
-      game->buried_tiles(my_move->origin_x, my_move->origin_y, kind, color);
-      int stackheight = color.size();
-   
-      int ii = gameToSceneX(my_move->origin_x, my_move->origin_y, stackheight);
-      int jj = gameToSceneY(my_move->origin_x, my_move->origin_y, stackheight);
-      
-      image.load(":/images/from_shade.png");
-      item = this->addPixmap(image);
-      item->setPos(ii, jj);
-   }
 
    // Draw the TO markers on occupied tiles
    if(my_move->origin_selected) {
@@ -162,8 +144,26 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
          }
       }
    }
-   game->clear_2d_vector(targets);
+   
+   // Draw the FROM marker
+   if(  my_move->origin_selected &&
+        my_move->origin_type == empty) {
+      
+      // Figure out the height of the stack
+      vector<type> kind;
+      vector<bool> color;
+      game->buried_tiles(my_move->origin_x, my_move->origin_y, kind, color);
+      int stackheight = color.size();
+   
+      int ii = gameToSceneX(my_move->origin_x, my_move->origin_y, stackheight);
+      int jj = gameToSceneY(my_move->origin_x, my_move->origin_y, stackheight);
+      
+      image.load(":/images/from_shade.png");
+      item = this->addPixmap(image);
+      item->setPos(ii, jj);
+   }
 
+   game->clear_2d_vector(targets);
    this->update();
 }
 

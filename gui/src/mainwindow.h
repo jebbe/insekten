@@ -34,7 +34,9 @@ private slots:
    void mainPieceSelected(int xx, int yy);
    
 private:
-   
+
+   void initiateMove(int ii, int jj, bool color);
+
    bool game_active;
    ai* game;
    bool white_human;
