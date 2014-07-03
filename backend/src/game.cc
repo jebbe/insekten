@@ -93,7 +93,7 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
    
    for(unsigned int ii=0; ii<turns.size(); ii++) delete turns[ii];
    turns.clear();
-   
+
    // Where can I place pieces?
    vector<board*> tiles;
    find_placeable_tiles(color, tiles);
@@ -120,12 +120,19 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
       board* it = my_board;
       board* started = my_board;
       do {
-         if(it->ontop != 0 && it->ontop->color == color) {
-            it->ontop->list_moves(turns, just_moved);
+         if(it->ontop != 0) {
+            it->ontop->list_moves(turns, just_moved, whose_turn(), false);
          }
          it = it->next;
       } while(it != started);
    }
+
+   if(half_turns > 0) {
+      board* it = my_board;
+      while(it->ontop == 0) it = it->next;
+      it->ontop->remove_duplicate_moves(turns);
+   }
+   
 }
 
 void game::perform_move(turn* go) {
@@ -309,7 +316,7 @@ bool game::white_wins() {
 }
 
 bool game::black_wins() {
-   return ((!queen_surrounded(true) && queen_surrounded(false)) ||
+   return ((queen_surrounded(true) && !queen_surrounded(false)) ||
            (no_legal_move(false) && !no_legal_move(true)));
 }
 
@@ -341,19 +348,8 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
          if(it->ontop == 0) return targets;
          piece* mp = it->ontop;
          while(mp->ontop != 0) mp = mp->ontop;
-         if(whose_turn() != mp->color) return targets;
          vector<turn*> turns;
-         mp->list_moves(turns, just_moved);
-
-         // Account for the possibility that the pillbug moves us around
-         for(int ii=0; ii<6; ii++) {
-            if(   it->nbr[ii] != 0 &&
-                  it->nbr[ii]->ontop != 0 && 
-                  it->nbr[ii]->ontop->kind == pillbug && 
-                  it->nbr[ii]->ontop->color == whose_turn()) {
-               it->nbr[ii]->ontop->list_moves(turns, just_moved);
-            }
-         }
+         mp->list_moves(turns, just_moved, whose_turn(), true);
 
          for(unsigned int ii=0; ii<turns.size(); ii++) {
             vector<int> coords = {turns[ii]->to->xx, 
@@ -400,18 +396,8 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
          vector<turn*> turns;
          piece *mp = it->ontop;
          while(mp->ontop != 0) mp = mp->ontop;
-         mp->list_moves(turns, just_moved);
+         mp->list_moves(turns, just_moved, whose_turn(), true);
 
-         // Account for the possibility that the pillbug moves us around
-         for(int ii=0; ii<6; ii++) {
-            if(   it->nbr[ii] != 0 &&
-                  it->nbr[ii]->ontop != 0 && 
-                  it->nbr[ii]->ontop->kind == pillbug && 
-                  it->nbr[ii]->ontop->color == whose_turn()) {
-               it->nbr[ii]->ontop->list_moves(turns, just_moved);
-            }
-         }
-         
          // Figure out what tile we move to
          for(unsigned int ii=0; ii<turns.size(); ii++) {
             if(   turns[ii]->from->xx == x_from && 

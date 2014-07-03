@@ -39,8 +39,8 @@ private:
    void find_moves_cricket(vector<turn*> &turns);
    void find_moves_beetle(vector<turn*> &turns);
    void find_moves_ladybug(vector<turn*> &turns);
-   void find_moves_mosquito(vector<turn*> &turns, board* just_moved);
-   void find_moves_pillbug(vector<turn*> &turns, board* just_moved);
+   void find_moves_mosquito(vector<turn*> &turns);
+   void find_moves_pillbug(vector<turn*> &turns);
 
 public:
    
@@ -57,7 +57,8 @@ public:
    ~piece();
    
    // Find all the tiles this piece can go to and add them into the vector.
-   void list_moves(vector<turn*> &turns, board* just_moved);
+   void list_moves(vector<turn*> &turns, board* just_moved, 
+                   bool whoseturn, bool rm_duplicates);
    
    // This is an expensive function, try to avoid if possible!
    void remove_duplicate_moves(vector<turn*> &turns);

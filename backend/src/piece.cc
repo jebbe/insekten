@@ -28,7 +28,8 @@ piece::~piece() {
    }
 }
 
-void piece::list_moves(vector<turn*> &turns, board* just_moved) {
+void piece::list_moves(vector<turn*> &turns, board* just_moved, 
+                       bool whoseturn, bool rm_duplicates) {
    
    // Check if we are blocked by a dungbeetle
    if(this->ontop != 0) return;
@@ -37,40 +38,64 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved) {
    
    // Check if we can move without violating the one-hive-rule. The pillbug
    // has to check this move itself, since it can move other pieces around.
-   if(kind != pillbug && !at->one_hive()) return;
+   if(!at->one_hive()) return;
 
    // Find possible moves for our specific piece
-   switch(kind) {
-      case queen:
-         find_moves_queen(turns);
-         break;
-      case ant:
-         find_moves_ant(turns);
-         break;
-      case spider:
-         find_moves_spider(turns);
-         break;
-      case cricket:
-         find_moves_cricket(turns);
-         break;
-      case beetle:
-         find_moves_beetle(turns);
-         break;
-      case ladybug:
-         find_moves_ladybug(turns);
-         break;
-      case mosquito:
-         find_moves_mosquito(turns, just_moved);
-         break;
-      case pillbug: // Make sure pillbug comes last so that pieces move by 
-                    // themselves rather than being moved by a pillbug if both
-                    // is possible
-         find_moves_pillbug(turns, just_moved);
-         break;
-      default:
-         cout << "Cannot find a move for an undefined piece." << endl;
-         exit(-1);
+   if(whoseturn == color) {
+      switch(kind) {
+         case queen:
+            find_moves_queen(turns);
+            break;
+         case ant:
+            find_moves_ant(turns);
+            break;
+         case spider:
+            find_moves_spider(turns);
+            break;
+         case cricket:
+            find_moves_cricket(turns);
+            break;
+         case beetle:
+            find_moves_beetle(turns);
+            break;
+         case ladybug:
+            find_moves_ladybug(turns);
+            break;
+         case mosquito:
+            find_moves_mosquito(turns);
+            break;
+         case pillbug:
+            find_moves_pillbug(turns);
+            break;
+         default:
+            cout << "Cannot find a move for an undefined piece." << endl;
+            exit(-1);
+      }
    }
+
+   // Account for the possibility that the pillbug moves us around
+   for(int ii=0; ii<6; ii++) {
+      if(   at->nbr[ii] != 0 &&
+            at->nbr[ii]->ontop != 0 && 
+            at->nbr[ii]->ontop->kind == pillbug && 
+            at->nbr[ii]->ontop->color == whoseturn) {
+         
+         // Check the neighbors of the pillbug. Pillbug is at at->nbr[ii]
+         for(int jj=0; jj<6; jj++) {
+            if(ii != (jj+3)%6) {
+               if(at->nbr[ii]->nbr[jj]->ontop == 0) {
+                  if(  !(at->impass_high_lvl(ii, true)) &&
+                       !(at->nbr[ii]->impass_high_lvl(jj, false))) {
+                     turns.push_back(new turn(at, at->nbr[ii]->nbr[jj]));
+                  }
+               }
+            }
+         }
+      }
+   }
+   
+   if(rm_duplicates) remove_duplicate_moves(turns);
+   
 }
 
 void piece::remove_duplicate_moves(vector<turn*> &turns) {
@@ -186,7 +211,7 @@ void piece::find_moves_ladybug(vector<turn*> &turns) {
    at->ontop = this;
 }
 
-void piece::find_moves_mosquito(vector<turn*> &turns, board* just_moved) {
+void piece::find_moves_mosquito(vector<turn*> &turns) {
    
    // Am I on top of somebody and thus a beetle?
    if(at->ontop != this) {
@@ -216,7 +241,7 @@ void piece::find_moves_mosquito(vector<turn*> &turns, board* just_moved) {
                   find_moves_ladybug(turns);
                   break;
                case pillbug:
-                  find_moves_pillbug(turns, just_moved);
+                  find_moves_pillbug(turns);
                   break;
                case mosquito:
                   break;
@@ -226,32 +251,11 @@ void piece::find_moves_mosquito(vector<turn*> &turns, board* just_moved) {
             }
          }
       }
-      remove_duplicate_moves(turns);
    }
 }
 
-void piece::find_moves_pillbug(vector<turn*> &turns, board* just_moved) {
-   
-   // Move myself
-   if(at->one_hive()) find_moves_queen(turns);
-
-   // Move others around
-   for(int ii=0; ii<6; ii++) {
-      if(at->nbr[ii]->ontop != 0 && at->nbr[ii]->ontop->ontop == 0) {
-         for(int jj=0; jj<6; jj++) {
-            if(at->nbr[jj]->ontop == 0) {
-               // Check one hive rule
-               if(  at->nbr[ii]->one_hive() &&
-                    !(at->nbr[ii]->impass_high_lvl((ii+3)%6, true)) &&
-                    !(at->impass_high_lvl(jj, false)) &&
-                    (at->nbr[ii] != just_moved)) {
-                  turns.push_back(new turn(at->nbr[ii], at->nbr[jj]));
-               }
-            }
-         }
-      }
-   }
-   remove_duplicate_moves(turns);
+void piece::find_moves_pillbug(vector<turn*> &turns) {
+   find_moves_queen(turns);
 }
 
 #endif 
