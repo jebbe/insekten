@@ -361,10 +361,12 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
             resetClicked();
  
             // We just moved. Make the computer move now
-             if(game->whose_turn() && !black_human) {
-               computerMove(true);
-            } else if(!game->whose_turn() && !white_human) {
-               computerMove(false);
+            if(!game->game_over()) {
+               if(game->whose_turn() && !black_human) {
+                  computerMove(true);
+               } else if(!game->whose_turn() && !white_human) {
+                  computerMove(false);
+               }
             }
 
          }
@@ -376,10 +378,12 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
          resetClicked();
          
          // We just moved. Make the computer move now
-          if(game->whose_turn() && !black_human) {
-            computerMove(true);
-         } else if(!game->whose_turn() && !white_human) {
-            computerMove(false);
+         if(!game->game_over()) {
+            if(game->whose_turn() && !black_human) {
+               computerMove(true);
+            } else if(!game->whose_turn() && !white_human) {
+               computerMove(false);
+            }
          }
       }
       
