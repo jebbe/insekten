@@ -24,6 +24,13 @@ turn::turn(type kind, bool color, board* to) {
    this->from = 0;
 }
 
+turn::turn(turn& other) {
+   this->kind = other.kind;
+   this->color = other.color;
+   this->to = other.to;
+   this->from = other.from;
+}
+
 // TODO There's room for optimization here - instead of deleting and 
 // creating a piece we could just move pointers around.
 

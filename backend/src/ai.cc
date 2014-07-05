@@ -27,7 +27,8 @@ bool ai::generate_move(int max_depth) {
 
 bool ai::perform_ai_move() {
    if(has_stored_move) {
-      perform_move(stored_move);
+      turn *move = new turn(*stored_move);
+      perform_move(move);
       return true;
    } else {
       return false;

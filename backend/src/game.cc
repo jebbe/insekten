@@ -147,13 +147,13 @@ void game::perform_move(turn* go) {
 
 void game::undo_move() {
    if(history.back()->kind != empty) 
-      stock[whose_turn()][history.back()->kind]++;
+      stock[int(!whose_turn())][history.back()->kind]++;
    just_moved = just_moved_history.back();
    just_moved_history.pop_back();
    history.back()->undo();
    delete history.back();
    history.pop_back();
-   half_turns--;
+      half_turns--;
 }
 
 bool game::queen_surrounded(bool color) {
@@ -355,6 +355,7 @@ vector<vector<int>> game::can_move_to(int xx, int yy) {
             vector<int> coords = {turns[ii]->to->xx, 
                                   turns[ii]->to->yy};
             targets.push_back(coords);
+            delete turns[ii];
          }
          return targets;
       }
@@ -406,6 +407,8 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
                   turns[ii]->to->yy == y_to) {
                perform_move(turns[ii]);
                return true;
+            } else {
+               delete turns[ii];
             }
          }
          return false;

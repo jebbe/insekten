@@ -33,6 +33,7 @@ public:
    turn(board* from, board* to);
    turn(type kind, bool color, board* to);
    turn();
+   turn(turn& other);
    
    // This moves the pieces around on the board
    void perform();

@@ -151,10 +151,10 @@ void MainWindow::newGame() {
 void MainWindow::undoMove() {
 
    if(!game_active) return;
-
-   if(newgamedialog_open) return;
-   QMessageBox::about(this, tr("Undo"),
-                      tr("Undo placeholder." ));
+   if(!white_human && game->turn_count() < 2) return;
+   game->undo();
+   if(!white_human || !black_human) game->undo();
+   resetClicked();
 }
 
 /////////////////////////
@@ -312,6 +312,7 @@ void MainWindow::resetClicked() {
    
    my_move->origin_selected = false;
    my_move->dest_selected = false;
+   my_move->computer_just_moved = false;
    
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);

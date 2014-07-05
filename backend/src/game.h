@@ -103,6 +103,7 @@ public:
    bool black_wins();
    bool is_draw();
    ruleset our_rules();
+   int turn_count() { return half_turns; }
    
    // Figure out where a certain pieces can move and where we can place new
    // pieces. Returns a vector containing x- and y-coordinates of the tiles.
@@ -115,8 +116,6 @@ public:
    bool place(type kind, int x_to, int y_to);
    bool undo();
    
-   // Temporary testing
-   void toy();
 };
 
 #endif 
