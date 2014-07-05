@@ -389,6 +389,11 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
       
       // Are we done?
       if(game->game_over()) {
+         
+         sceneWhite->redraw(game, my_move);
+         sceneBlack->redraw(game, my_move);
+         sceneMain->redraw(game, my_move);
+         
          if(game->white_wins()) {
             QMessageBox::about(this, tr("Game over"),
                          tr("White wins!" ));
