@@ -74,19 +74,21 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved,
    }
 
    // Account for the possibility that the pillbug moves us around
-   for(int ii=0; ii<6; ii++) {
-      if(   at->nbr[ii] != 0 &&
-            at->nbr[ii]->ontop != 0 && 
-            at->nbr[ii]->ontop->kind == pillbug && 
-            at->nbr[ii]->ontop->color == whoseturn) {
-         
-         // Check the neighbors of the pillbug. Pillbug is at at->nbr[ii]
-         for(int jj=0; jj<6; jj++) {
-            if(ii != (jj+3)%6) {
-               if(at->nbr[ii]->nbr[jj]->ontop == 0) {
-                  if(  !(at->impass_high_lvl(ii, true)) &&
-                       !(at->nbr[ii]->impass_high_lvl(jj, false))) {
-                     turns.push_back(new turn(at, at->nbr[ii]->nbr[jj]));
+   if(at->ontop == this) {
+      for(int ii=0; ii<6; ii++) {
+         if(   at->nbr[ii] != 0 &&
+               at->nbr[ii]->ontop != 0 && 
+               at->nbr[ii]->ontop->kind == pillbug && 
+               at->nbr[ii]->ontop->color == whoseturn) {
+            
+            // Check the neighbors of the pillbug. Pillbug is at at->nbr[ii]
+            for(int jj=0; jj<6; jj++) {
+               if(ii != (jj+3)%6) {
+                  if(at->nbr[ii]->nbr[jj]->ontop == 0) {
+                     if(  !(at->impass_high_lvl(ii, true)) &&
+                          !(at->nbr[ii]->impass_high_lvl(jj, false))) {
+                        turns.push_back(new turn(at, at->nbr[ii]->nbr[jj]));
+                     }
                   }
                }
             }

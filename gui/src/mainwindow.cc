@@ -175,7 +175,15 @@ void MainWindow::beginGame() {
    }
    my_move->origin_selected = false;
    my_move->dest_selected = false;
-
+   
+   if(   ui->white_computer->isChecked() &&
+         ui->black_computer->isChecked()) {
+      abortBeginGame();
+      QMessageBox::about(this, tr("Error"),
+                         tr("Cannot have the computer play itself." ));
+      return;
+   }
+   
    // Set up a new game
    game_active = true;
    int my_rules = 0;
