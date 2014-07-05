@@ -70,7 +70,12 @@ void InventoryScene::redraw(ai* game, uiMove *my_move) {
    
    QGraphicsPixmapItem* item;
    QPixmap image;
-
+   
+   if(game->whose_turn() == my_color) 
+      this->setBackgroundBrush(QColor::fromRgb(220,220,255));
+   else 
+      this->setBackgroundBrush(QColor::fromRgb(220,220,220));
+   
    int jj = 0;
    int stock;
    
