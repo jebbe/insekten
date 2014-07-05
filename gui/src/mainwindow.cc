@@ -204,7 +204,7 @@ void MainWindow::beginGame() {
    newgamedialog_open = false;
    delete newgamedialog;
    delete ui;
-   
+
    // Set up the main display and inventories
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
@@ -212,6 +212,13 @@ void MainWindow::beginGame() {
    
    // If the computer plays white, we have to make it move now
    if(!white_human) computerMove(true);
+
+   // Set up the main display and inventories
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move);
+
+   my_move->computer_just_moved = false;
    
 }
 
