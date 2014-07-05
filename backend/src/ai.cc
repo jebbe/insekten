@@ -82,7 +82,7 @@ int ai::ai_move_x_to() {
 
 int ai::ai_move_y_to() {
    if(has_stored_move) {
-      return stored_move->to->xx;
+      return stored_move->to->yy;
    } else {
       cout << "Cannot examine a non-existent move!" << endl;
       exit(-1);

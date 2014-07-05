@@ -50,7 +50,9 @@ private:
    void createActions();
    void createMenu();
    void createToolbar();
-
+   
+   void computerMove(bool color);
+   
    GameScene *sceneMain;
    QGraphicsView *viewMain;
 

@@ -14,6 +14,7 @@ MainWindow::MainWindow() {
    my_move = new uiMove;
    my_move->origin_selected = false;
    my_move->dest_selected = false;
+   my_move->computer_just_moved = false;
    
    createActions();
    createMenu();
@@ -176,6 +177,7 @@ void MainWindow::beginGame() {
    my_move->origin_selected = false;
    my_move->dest_selected = false;
    
+   // Could potentially make this work at some point - right now just cancel
    if(   ui->white_computer->isChecked() &&
          ui->black_computer->isChecked()) {
       abortBeginGame();
@@ -208,11 +210,42 @@ void MainWindow::beginGame() {
    sceneBlack->redraw(game, my_move);
    sceneMain->redraw(game, my_move);
    
+   // If the computer plays white, we have to make it move now
+   if(!white_human) computerMove(true);
+   
 }
 
 /////////////////////////////
 // PLAYING THE ACTUAL GAME //
 /////////////////////////////
+
+void MainWindow::computerMove(bool color) {
+   
+   // Could potentially put this into a new thread and display a waiting message
+   
+   if(color) game->generate_move(black_level);
+   else game->generate_move(white_level);
+   
+   game->perform_ai_move();
+
+   my_move->computer_just_moved = true;
+   my_move->origin_selected = false;
+   //my_move->origin_color;
+   my_move->origin_type = game->ai_move_kind();
+   if(my_move->origin_type == empty) {
+      my_move->origin_x = game->ai_move_x_from();
+      my_move->origin_y = game->ai_move_y_from();
+   }
+   my_move->dest_selected = false;
+   //my_move->dest_color;
+   my_move->dest_type = game->ai_move_kind();
+   my_move->dest_x = game->ai_move_x_to();
+   my_move->dest_y = game->ai_move_y_to();
+   
+   game->delete_ai_move();
+
+}
+
 
 void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
    
@@ -314,16 +347,33 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
          // We're moving a tile
          
          if(!game->move(my_move->origin_x, my_move->origin_y, ii, jj)) {
+            
             // Couldn't move; initiate another move instead
             initiateMove(ii, jj, color);
          } else {
             resetClicked();
+ 
+            // We just moved. Make the computer move now
+             if(game->whose_turn() && !black_human) {
+               computerMove(true);
+            } else if(!game->whose_turn() && !white_human) {
+               computerMove(false);
+            }
+
          }
          
      } else {
+        
          // We're placing a new tile
          game->place(my_move->origin_type, ii, jj);
          resetClicked();
+         
+         // We just moved. Make the computer move now
+          if(game->whose_turn() && !black_human) {
+            computerMove(true);
+         } else if(!game->whose_turn() && !white_human) {
+            computerMove(false);
+         }
       }
       
       // Are we done?
@@ -352,6 +402,9 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
    sceneMain->redraw(game, my_move);
+   
+   my_move->computer_just_moved = false;
+   
 }
 
 

@@ -72,7 +72,7 @@ int GameScene::gameToSceneY(int xx, int yy, int stackheight) {
 ////////////////////
 
 void GameScene::redraw(ai *game, uiMove *my_move) {
-
+   
    this->clear();
 
    QGraphicsPixmapItem* item;
@@ -82,7 +82,7 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    int ymin = game->y_min();
    int xmax = game->x_max();
    int ymax = game->y_max();
-
+   
    // Draw the TO markers on empty tiles
    vector<vector<int> > targets;
    if(my_move->origin_selected) {
@@ -162,7 +162,41 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
       item = this->addPixmap(image);
       item->setPos(ii, jj);
    }
-
+   
+   // Draw the "Computer just moved" markers
+   if(my_move->computer_just_moved) {
+      
+      // Figure out the height of the stack
+      vector<type> kind;
+      vector<bool> color;
+      game->buried_tiles(my_move->dest_x, my_move->dest_y, kind, color);
+      int stackheight = color.size();
+      
+      int ii = gameToSceneX(my_move->dest_x, my_move->dest_y, stackheight);
+      int jj = gameToSceneY(my_move->dest_x, my_move->dest_y, stackheight);
+      
+      image.load(":/images/to_shade.png");
+      item = this->addPixmap(image);
+      item->setPos(ii, jj);
+      
+      // Did we move, i.e. do we have to draw a from marker?
+      if(my_move->origin_type == empty) {
+         
+         // Figure out the height of the stack
+         vector<type> kind;
+         vector<bool> color;
+         game->buried_tiles(my_move->origin_x, my_move->origin_y, kind, color);
+         int stackheight = color.size();
+      
+         int ii = gameToSceneX(my_move->origin_x, my_move->origin_y, stackheight);
+         int jj = gameToSceneY(my_move->origin_x, my_move->origin_y, stackheight);
+         
+         image.load(":/images/from_shade.png");
+         item = this->addPixmap(image);
+         item->setPos(ii, jj);
+      }
+   }
+   
    game->clear_2d_vector(targets);
    this->update();
 }
