@@ -76,11 +76,28 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved,
    // Account for the possibility that the pillbug moves us around
    if(at->ontop == this) {
       for(int ii=0; ii<6; ii++) {
+         
+         bool nbr_is_pillbug = false;
+         // Is my neighbor a pillbug?
+         if(at->nbr[ii] != 0 &&
+            at->nbr[ii]->ontop != 0 && 
+            at->nbr[ii]->ontop->kind == pillbug && 
+            at->nbr[ii]->ontop->color == whoseturn) nbr_is_pillbug = true;
+         // Is my neighbor a mosquito that inherits pillbug behavior?
          if(   at->nbr[ii] != 0 &&
                at->nbr[ii]->ontop != 0 && 
-               at->nbr[ii]->ontop->kind == pillbug && 
+               at->nbr[ii]->ontop->kind == mosquito && 
                at->nbr[ii]->ontop->color == whoseturn) {
-            
+            for(int kk=0; kk<6; kk++) {
+               if(   at->nbr[ii]->nbr[kk] != 0 &&
+                     at->nbr[ii]->nbr[kk]->ontop != 0 && 
+                     at->nbr[ii]->nbr[kk]->ontop->kind == pillbug) {
+                  nbr_is_pillbug = true;
+               }
+            }
+         }
+
+         if(nbr_is_pillbug) {
             // Check the neighbors of the pillbug. Pillbug is at at->nbr[ii]
             for(int jj=0; jj<6; jj++) {
                if(ii != (jj+3)%6) {
