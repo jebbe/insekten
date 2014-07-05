@@ -105,15 +105,12 @@ void piece::remove_duplicate_moves(vector<turn*> &turns) {
    at->set_not_visited();
    for(unsigned int ii=0; ii<turns.size(); ii++) {
       for(unsigned int jj=ii+1; jj<turns.size(); jj++) {
-         if( turns[ii]->from == turns[jj]->from &&
-             turns[ii]->to == turns[jj]->to &&
-             turns[ii]->kind == turns[jj]->kind ) {
-            duplicates.push_back(ii);
+         if(  turns[ii]->from == turns[jj]->from &&
+              turns[ii]->to == turns[jj]->to &&
+              turns[ii]->kind == turns[jj]->kind ) {
+            turns.erase(turns.begin()+jj); jj--;
          }
       }
-   }
-   for(int ii=duplicates.size()-1; ii>=0; ii--) {
-      turns.erase(turns.begin()+duplicates[ii]);
    }
 }
 
@@ -254,6 +251,7 @@ void piece::find_moves_mosquito(vector<turn*> &turns) {
          }
       }
    }
+   cout << "mosquito: " << turns.size() << endl;
 }
 
 void piece::find_moves_pillbug(vector<turn*> &turns) {
