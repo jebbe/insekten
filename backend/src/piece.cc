@@ -251,7 +251,6 @@ void piece::find_moves_mosquito(vector<turn*> &turns) {
          }
       }
    }
-   cout << "mosquito: " << turns.size() << endl;
 }
 
 void piece::find_moves_pillbug(vector<turn*> &turns) {
