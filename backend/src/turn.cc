@@ -46,10 +46,10 @@ void turn::perform() {
       type my_kind = it->kind;
       bool my_color = it->color;
       from->remove_piece();
-      piece *my_piece = new piece(my_kind, my_color, to);
+      new piece(my_kind, my_color, to);
    } else {
       // Place a new tile
-      piece* my_piece = new piece(kind, color, to);
+      new piece(kind, color, to);
    }
 }
 
@@ -65,7 +65,7 @@ void turn::undo() {
       type my_kind = it->kind;
       bool my_color = it->color;
       to->remove_piece();
-      piece *my_piece = new piece(my_kind, my_color, from);
+      new piece(my_kind, my_color, from);
    } else {
       // Remove a tile
       to->remove_piece();

@@ -12,8 +12,8 @@ ai::ai(ruleset rules) : game(rules) {
    getline(file, junk);
    file >> weight[0] >> weight[1] >> weight[2] >> junk;
    for(int ii=0; ii<8; ii++) {
-      file >> score[0][ii] >> score[1][ii] >> score[2][ii] >> score[3][ii] 
-           >> score[4][ii] >> junk;
+      file >> score[ii][0] >> score[ii][1] >> score[ii][2] >> score[ii][3]
+           >> score[ii][4] >> junk;
    }
    file >> score_per_bee_freedom >> junk;
    file >> score_no_queen >> junk;
@@ -35,6 +35,9 @@ float ai::eval() {
       sign = color ? 1 : -1;
       vector<turn*> turns;
       
+      // Count number of pieces
+      float npieces = 0;
+      
       // Free neighboring tiles of the bee
       if(stock[int(color)][queen] == 0) {
          board* it = my_board;
@@ -42,15 +45,23 @@ float ai::eval() {
                it->ontop->kind != queen || 
                it->ontop->color != color) it = it->next;
          for(int ii=0; ii<6; ii++) {
-            if(it->nbr[ii]->ontop == 0) index[0] += score_per_bee_freedom;
+            if(it->nbr[ii]->ontop == 0) index[0] += sign * score_per_bee_freedom;
          }
       } else {
-         index[0] += score_no_queen;
+         index[0] += sign * score_no_queen;
       }
       
       // Number of moves around the board
       find_all_movement_moves(color, turns);
-      
+      int kind[NUM_TYPE];
+      for(int ii=0; ii<int(turns.size()); ii++) {
+         kind[int(turns[ii]->from->ontop->kind)]++;
+      }
+      for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
+         index[1] += sign * float(kind[int(ii)])
+                          * (score[ii][0] + score[ii][1])
+                          / (npieces + score[ii][1]);
+      }
       delete_moves(turns);
       
       // Number of placements
@@ -61,8 +72,8 @@ float ai::eval() {
       // Number of pieces in stock
       
    }
-//   cout << index[0] + index[1] + index[2] + index[3] << " from "
-//        << index[0] << " " << index[1] << " " << index[2] << " " << index[3] << endl;
+   cout << index[0] + index[1] + index[2] + index[3] << " from "
+        << index[0] << " " << index[1] << " " << index[2] << " " << index[3] << endl;
    return index[0] + index[1] + index[2] + index[3]; 
    
 }
@@ -80,7 +91,7 @@ bool ai::generate_move(int max_depth) {
       float highest = - std::numeric_limits<float>::max();
       float points;
       int chosen = 0;
-      for(int ii=0; ii<turns.size(); ii++) {
+      for(int ii=0; ii<int(turns.size()); ii++) {
          perform_move(turns[ii]);
          points = eval();
          if(points > highest) {
@@ -89,7 +100,7 @@ bool ai::generate_move(int max_depth) {
          }
          undo_move();
       }
-//      cout << "Choosing: " << highest << endl;
+      cout << "Choosing: " << highest << endl;
       if(has_stored_move) {
          cerr << "Error: Cannot generate another move." << endl;
          exit(-1);

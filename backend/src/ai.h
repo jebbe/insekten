@@ -23,8 +23,24 @@ private:
    turn* stored_move;
    
    float eval();
-   float score[5][8];
+   
+   // score[kind][term]
+   // kind: What insect? Refers to the type enum.
+   // term: 0: Movements
+   //       1: Mvmnts dgr
+   //       2: Placements
+   //       3: Stock
+   //       4: Stock degrading
+   float score[8][5];
+   
+   // weight[term]
+   // term: 0: Movements
+   //       1: Placements
+   //       2: Stock
    float weight[3];
+   
+   // How many points for not setting the queen, how many for every free
+   // tile around the bee?
    float score_no_queen, score_per_bee_freedom;
    
 public:

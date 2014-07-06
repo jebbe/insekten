@@ -26,11 +26,6 @@ void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
    }
 }
 
-
-bool GameScene::clicked_is_outside(ai *game, double xx, double yy) {
-   return false;
-}
-
 ////////////////////////////////
 // COORDINATE TRANSFORMATIONS //
 ////////////////////////////////

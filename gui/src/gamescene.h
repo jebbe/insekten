@@ -29,8 +29,6 @@ public:
 
    void redraw(ai *game, uiMove *my_move);
 
-   bool clicked_is_outside(ai *game, double xx, double yy);
-
    int SceneToGameX(int xx, int yy);
    int SceneToGameY(int xx, int yy);
 

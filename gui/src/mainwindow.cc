@@ -347,7 +347,6 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
    int ii = sceneMain->SceneToGameX(xx, yy);
    int jj = sceneMain->SceneToGameY(xx, yy);
    
-   type kind = game->get_tile_type(ii, jj);
    bool color = game->get_tile_color(ii, jj);
    
    if(my_move->origin_selected == true) {

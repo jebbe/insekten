@@ -102,7 +102,7 @@ void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
    }
    
    // Find all possible placements
-   for(int ii=0; ii<tiles.size(); ii++) {
+   for(int ii=0; ii<int(tiles.size()); ii++) {
       for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
          if(stock[int(color)][int(kind)] > 0) {
             turns.push_back(new turn((type)kind, color, tiles[ii]));
@@ -168,7 +168,7 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
    }
    
    // Find all possible placements
-   for(int ii=0; ii<tiles.size(); ii++) {
+   for(int ii=0; ii<int(tiles.size()); ii++) {
       for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
          if(stock[int(color)][int(kind)] > 0) {
             turns.push_back(new turn((type)kind, color, tiles[ii]));
@@ -197,7 +197,7 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
 }
 
 void game::delete_moves(vector<turn*> &turns) {
-   for(int ii=0; ii<turns.size(); ii++) {
+   for(int ii=0; ii<int(turns.size()); ii++) {
       delete turns[ii];
    }
    turns.clear();
