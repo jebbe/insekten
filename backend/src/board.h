@@ -31,6 +31,11 @@ private:
 
 public:
    
+   // Are we connected to a tile with a piece on top of it, or do we have a
+   // on top of ourselves? This allows us to keep unused tiles in the memory for
+   // later use.
+   bool connected;
+   
    // Position on the board
    int xx, yy;
    

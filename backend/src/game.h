@@ -30,10 +30,6 @@ class game {
 
 private:
    
-   vector<turn*> turns;
-   board* my_board;
-   ruleset rules;
-   
    // Keep a history of turns
    int half_turns;
    vector<turn*> history;
@@ -41,9 +37,6 @@ private:
    
    // Remember which piece has just moved and thus cannot be moved right again
    board* just_moved;
-   
-   // Keep track of the not-yet-placed pieces
-   int stock[2][NUM_TYPE];
    
    // print the content of a single tile
    void print_tile(board* it);
@@ -58,9 +51,18 @@ private:
 // These routines use the internal data structures and are meant to be used by
 // the AI
 protected:
-   
+
+   board* my_board;
+   ruleset rules;
+
+   // Keep track of the not-yet-placed pieces
+   int stock[2][NUM_TYPE];
+
    // List all the possible moves of a piece
    void find_all_moves(bool color, vector<turn*> &turns);
+   void find_all_placement_moves(bool color, vector<turn*> &turns);
+   void find_all_movement_moves(bool color, vector<turn*> &turns);
+   void delete_moves(vector<turn*> &turns);
    
    // Carry out a turn or undo it
    void perform_move(turn* go);

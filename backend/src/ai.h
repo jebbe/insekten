@@ -7,6 +7,9 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <string>
+#include <limits>
 
 #include "game.h"
 
@@ -18,6 +21,11 @@ private:
    
    bool has_stored_move;
    turn* stored_move;
+   
+   float eval();
+   float score[5][8];
+   float weight[3];
+   float score_no_queen, score_per_bee_freedom;
    
 public:
    

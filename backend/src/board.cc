@@ -9,6 +9,8 @@
 
 board::board(board* some_board, int xx, int yy) {
    
+   connected = true;
+   
    // Put myself within the ring list
    if(some_board == 0) {
       next = this;
@@ -105,6 +107,8 @@ void board::place_piece(piece* bug) {
                   }
                }
             } while(it != started);
+         } else {
+            nbr[ii]->connected = true;
          }
       }
    } else {
@@ -151,7 +155,8 @@ void board::remove_piece() {
             }
          }
          if(removable) {
-            delete this->nbr[ii];
+            this->nbr[ii]->connected = false;
+            //delete this->nbr[ii];
          }
       }
    }
@@ -165,6 +170,7 @@ void board::remove_piece() {
 bool board::bee_can_move_to(int nbr_no) {
    
    if(nbr[nbr_no] == 0) return false; // Neighboring tile doesn't exist
+   if(!nbr[nbr_no]->connected) return false; // Neighboring tile doesn't exist
    if(nbr[nbr_no]->ontop != 0) return false; // Neighboring tile occupied
 
    // We can move when one and only one of the two common neighbors have a

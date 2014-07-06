@@ -36,7 +36,6 @@ game::game(ruleset rules) {
 }
 
 game::~game() {
-   for(unsigned int ii=0; ii<turns.size(); ii++) delete turns[ii];
    for(unsigned int ii=0; ii<history.size(); ii++) delete history[ii];
    my_board->delete_all();
 }
@@ -68,7 +67,7 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
    board* it = my_board;
    board* started = my_board;
    do {
-      if(it->ontop == 0) {
+      if(it->ontop == 0 && it->connected == true) {
          bool can_place = true;
          for(int ii=0; ii<6; ii++) {
             if(it->nbr[ii] != 0 && it->nbr[ii]->ontop !=0) {
@@ -88,12 +87,74 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
    } while(it != started);
 }
 
+void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
+
+   // Where can I place pieces?
+   vector<board*> tiles;
+   find_placeable_tiles(color, tiles);
+   
+   // Do we have to place the queen bee?
+   if(half_turns > 5 && stock[int(color)][queen] == 1) {
+      for(unsigned int ii=0; ii<tiles.size(); ii++) {
+         turns.push_back(new turn(queen, color, tiles[ii]));
+      }
+      return;
+   }
+   
+   // Find all possible placements
+   for(int ii=0; ii<tiles.size(); ii++) {
+      for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
+         if(stock[int(color)][int(kind)] > 0) {
+            turns.push_back(new turn((type)kind, color, tiles[ii]));
+         }
+      }
+   }
+      
+   if(half_turns > 0) {
+      board* it = my_board;
+      while(it->ontop == 0) it = it->next;
+      it->ontop->remove_duplicate_moves(turns);
+   }
+   
+}
+
+
+void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
+   
+   // Where can I place pieces?
+   vector<board*> tiles;
+   find_placeable_tiles(color, tiles);
+   
+   // Do we have to place the queen bee?
+   if(half_turns > 5 && stock[int(color)][queen] == 1) {
+      for(unsigned int ii=0; ii<tiles.size(); ii++) {
+         turns.push_back(new turn(queen, color, tiles[ii]));
+      }
+      return;
+   }
+   
+   // Where can I move pieces?
+   if(stock[int(color)][queen] == 0) { // Is the bee already placed?
+      board* it = my_board;
+      board* started = my_board;
+      do {
+         if(it->ontop != 0) {
+            it->ontop->list_moves(turns, just_moved, whose_turn(), false);
+         }
+         it = it->next;
+      } while(it != started);
+   }
+
+   if(half_turns > 0) {
+      board* it = my_board;
+      while(it->ontop == 0) it = it->next;
+      it->ontop->remove_duplicate_moves(turns);
+   }
+   
+}
 
 void game::find_all_moves(bool color, vector<turn*> &turns) {
    
-   for(unsigned int ii=0; ii<turns.size(); ii++) delete turns[ii];
-   turns.clear();
-
    // Where can I place pieces?
    vector<board*> tiles;
    find_placeable_tiles(color, tiles);
@@ -135,6 +196,13 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
    
 }
 
+void game::delete_moves(vector<turn*> &turns) {
+   for(int ii=0; ii<turns.size(); ii++) {
+      delete turns[ii];
+   }
+   turns.clear();
+}
+   
 void game::perform_move(turn* go) {
    if(go->kind != empty)
       stock[whose_turn()][int(go->kind)]--;
@@ -142,7 +210,7 @@ void game::perform_move(turn* go) {
    just_moved_history.push_back(just_moved);
    go->perform();
    half_turns++;
-   history.push_back(go);
+   history.push_back(new turn(*go));
 }
 
 void game::undo_move() {
@@ -176,7 +244,9 @@ bool game::no_legal_move(bool color) {
    if(whose_turn() != color) return false;
    vector<turn*> turns;
    find_all_moves(color, turns);
-   if(turns.size() == 0) return true;
+   int size = turns.size();
+   // delete the moves
+   if(size == 0) return true;
    return false;
 }
 
@@ -406,6 +476,7 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
                   turns[ii]->to->xx == x_to && 
                   turns[ii]->to->yy == y_to) {
                perform_move(turns[ii]);
+               delete turns[ii];
                return true;
             } else {
                delete turns[ii];
@@ -436,6 +507,7 @@ bool game::place(type kind, int x_to, int y_to) {
       if(tiles[ii]->xx == x_to && tiles[ii]->yy == y_to) {
          turn* my_turn = new turn(kind, whose_turn(), tiles[ii]);
          perform_move(my_turn);
+         delete my_turn;
          return true;
       }
    }
