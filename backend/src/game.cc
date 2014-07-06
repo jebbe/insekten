@@ -122,7 +122,7 @@ void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
       board* started = my_board;
       do {
          if(it->ontop != 0) {
-            it->ontop->list_moves(turns, just_moved, color, false);
+            it->ontop->list_moves(turns, just_moved, color, false, false);
          }
          it = it->next;
       } while(it != started);

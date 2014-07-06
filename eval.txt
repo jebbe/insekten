@@ -1,5 +1,5 @@
 Movements | Mvmnts dgr | Placements | Stock | Stock degrading            
- 10                       1            5                      Total       
+ 5                        1            5                      Total       
  5           5            1            -2      100            Queen       
  0.5         10           1            0       100            Ant         
  1           5            1            1       100            Spider      

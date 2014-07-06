@@ -57,8 +57,10 @@ public:
    ~piece();
    
    // Find all the tiles this piece can go to and add them into the vector.
+   // Last parameter can be set to false for the evaluation function.
    void list_moves(vector<turn*> &turns, board* just_moved, 
-                   bool whoseturn, bool rm_duplicates);
+                   bool whoseturn, bool rm_duplicates, 
+                   bool check_just_moved = true);
    
    // This is an expensive function, try to avoid if possible!
    void remove_duplicate_moves(vector<turn*> &turns);

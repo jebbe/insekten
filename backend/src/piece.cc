@@ -29,17 +29,18 @@ piece::~piece() {
 }
 
 void piece::list_moves(vector<turn*> &turns, board* just_moved, 
-                       bool whoseturn, bool rm_duplicates) {
+                       bool whoseturn, bool rm_duplicates,
+                       bool check_just_moved) {
    
    // Check if we are blocked by a dungbeetle
    if(this->ontop != 0) return;
    
-   if(at == just_moved) return;
+   if(check_just_moved && at == just_moved) return;
    
    // Check if we can move without violating the one-hive-rule. The pillbug
    // has to check this move itself, since it can move other pieces around.
    if(!at->one_hive()) return;
-
+   
    // Find possible moves for our specific piece
    if(whoseturn == color) {
       switch(kind) {

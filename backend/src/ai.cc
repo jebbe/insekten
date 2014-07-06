@@ -65,8 +65,9 @@ float ai::eval(bool evalcolor, bool print) {
                it->ontop->kind != queen || 
                it->ontop->color != color) it = it->next;
          for(int ii=0; ii<6; ii++) {
-            if(it->nbr[ii]->ontop == 0) index[0] += float(sign) 
-                                                    * score_per_bee_freedom;
+            if(it->nbr[ii]->ontop == 0) {
+               index[0] += float(sign) * score_per_bee_freedom;
+            }
          }
       } else {
          index[0] += float(sign) * score_no_queen;
@@ -79,7 +80,7 @@ float ai::eval(bool evalcolor, bool print) {
          kind[int(turns[ii]->from->ontop->kind)]++;
       }
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
-         index[1] += weight[0] * float(sign) * float(kind[int(ii)])
+         index[1] += float(sign) * weight[0] * float(kind[int(ii)])
                           * (score[ii][0] + score[ii][1])
                           / (npieces + score[ii][1]);
       }
@@ -100,14 +101,19 @@ float ai::eval(bool evalcolor, bool print) {
       turns.clear();
       
       // Number of pieces in stock
+      for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
+         index[3] += float(sign) * weight[2] * float(stock[color][int(ii)])
+                          * (score[ii][3] + score[ii][4])
+                          / (float(stock[color][int(ii)]) + score[ii][4]);
+      }
       
    }
    if(print) {
       cout << "Total score: " << index[0] + index[1] + index[2] + index[3] 
            << " | bee free neighbors: " << index[0] 
-           << " | number of moves: " << index[1] 
-           << " | number of new pieces: " << index[2] 
-           << " | number of reserve: " << index[3] << endl;
+           << " | # moves around: " << index[1] 
+           << " | # placements: " << index[2] 
+           << " | # reserve: " << index[3] << endl;
    }
    return index[0] + index[1] + index[2] + index[3]; 
    
