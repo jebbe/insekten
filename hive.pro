@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = 
+TARGET = hive
 DEPENDPATH += . gui backend/src gui/src
 INCLUDEPATH += . backend/src
 
