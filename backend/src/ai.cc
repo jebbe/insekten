@@ -96,11 +96,12 @@ bool ai::generate_move(int max_depth) {
       }
       has_stored_move = true;
       stored_move = new turn(*turns[chosen]);
+      delete_moves(turns);
       return true;
    } else {
+      delete_moves(turns);
       return false;
    }
-   delete_moves(turns);
 }
 
 

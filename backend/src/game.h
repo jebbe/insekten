@@ -64,7 +64,8 @@ protected:
    void find_all_movement_moves(bool color, vector<turn*> &turns);
    void delete_moves(vector<turn*> &turns);
    
-   // Carry out a turn or undo it
+   // Carry out a turn or undo it. Will create a copy of the turn object, so
+   // that it can be deleted after calling perform_move().
    void perform_move(turn* go);
    void undo_move();
 

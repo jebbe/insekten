@@ -65,6 +65,10 @@ MainWindow::MainWindow() {
 
 MainWindow::~MainWindow() {
    delete my_move;
+   if(game_active) {
+      delete game;
+   }
+
 }
 
 // void MainWindow::createInventories() {

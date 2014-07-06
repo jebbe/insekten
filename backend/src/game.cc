@@ -243,9 +243,9 @@ bool game::queen_surrounded(bool color) {
 bool game::no_legal_move(bool color) {
    if(whose_turn() != color) return false;
    vector<turn*> turns;
-   find_all_moves(color, turns);
+   find_all_moves(color, turns); // Creates a memory leak. No idea why!
    int size = turns.size();
-   // delete the moves
+   delete_moves(turns);
    if(size == 0) return true;
    return false;
 }
@@ -476,12 +476,11 @@ bool game::move(int x_from, int y_from, int x_to, int y_to) {
                   turns[ii]->to->xx == x_to && 
                   turns[ii]->to->yy == y_to) {
                perform_move(turns[ii]);
-               delete turns[ii];
+               delete_moves(turns);
                return true;
-            } else {
-               delete turns[ii];
             }
          }
+         delete_moves(turns);
          return false;
       }
       it = it->next;
