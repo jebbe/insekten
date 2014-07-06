@@ -1,0 +1,14 @@
+Movements | Mvmnts dgr | Placements | Stock | Stock degrading            
+ 10                       1            5                      Total       
+ 5           5            1            -2      100            Queen       
+ 0.5         10           1            0       100            Ant         
+ 1           5            1            1       100            Spider      
+ 1           5            1            1       100            Cricket     
+ 1           5            1            1       100            Beetle      
+ 0.8         5            1            1       100            Ladybug     
+ 0.5         8            1            1       100            Mosquito    
+ 5           5            1            1       100            Pillbug     
+50 Score_per_free_bee_neighbor
+150 Score_for_unplaced_queen
+1e4 Victory
+-5 draw

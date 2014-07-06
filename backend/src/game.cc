@@ -93,14 +93,6 @@ void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
    vector<board*> tiles;
    find_placeable_tiles(color, tiles);
    
-   // Do we have to place the queen bee?
-   if(half_turns > 5 && stock[int(color)][queen] == 1) {
-      for(unsigned int ii=0; ii<tiles.size(); ii++) {
-         turns.push_back(new turn(queen, color, tiles[ii]));
-      }
-      return;
-   }
-   
    // Find all possible placements
    for(int ii=0; ii<int(tiles.size()); ii++) {
       for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
@@ -121,17 +113,8 @@ void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
 
 void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
    
-   // Where can I place pieces?
-   vector<board*> tiles;
-   find_placeable_tiles(color, tiles);
-   
    // Do we have to place the queen bee?
-   if(half_turns > 5 && stock[int(color)][queen] == 1) {
-      for(unsigned int ii=0; ii<tiles.size(); ii++) {
-         turns.push_back(new turn(queen, color, tiles[ii]));
-      }
-      return;
-   }
+   if(half_turns > 5 && stock[int(color)][queen] == 1) return;
    
    // Where can I move pieces?
    if(stock[int(color)][queen] == 0) { // Is the bee already placed?
@@ -139,7 +122,7 @@ void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
       board* started = my_board;
       do {
          if(it->ontop != 0) {
-            it->ontop->list_moves(turns, just_moved, whose_turn(), false);
+            it->ontop->list_moves(turns, just_moved, color, false);
          }
          it = it->next;
       } while(it != started);
@@ -147,7 +130,7 @@ void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
 
    if(half_turns > 0) {
       board* it = my_board;
-      while(it->ontop == 0) it = it->next;
+      while(it->ontop == 0) it = it->next; // Find a tile with a piece on top of it
       it->ontop->remove_duplicate_moves(turns);
    }
    
@@ -182,7 +165,7 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
       board* started = my_board;
       do {
          if(it->ontop != 0) {
-            it->ontop->list_moves(turns, just_moved, whose_turn(), false);
+            it->ontop->list_moves(turns, just_moved, color, false);
          }
          it = it->next;
       } while(it != started);

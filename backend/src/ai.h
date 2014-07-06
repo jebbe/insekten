@@ -22,7 +22,7 @@ private:
    bool has_stored_move;
    turn* stored_move;
    
-   float eval();
+   float eval(bool evalcolor, bool print);
    
    // score[kind][term]
    // kind: What insect? Refers to the type enum.
@@ -42,6 +42,7 @@ private:
    // How many points for not setting the queen, how many for every free
    // tile around the bee?
    float score_no_queen, score_per_bee_freedom;
+   float victory_score, draw_score;
    
 public:
    
