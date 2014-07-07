@@ -232,6 +232,11 @@ void MainWindow::beginGame() {
 
 void MainWindow::computerMove(bool color) {
    
+   // Redraw the scene before going unresponsive because of searching
+//    sceneWhite->redraw(game, my_move);
+//    sceneBlack->redraw(game, my_move);
+//    sceneMain->redraw(game, my_move);
+
    // Could potentially put this into a new thread and display a waiting message
    
    if(color) game->generate_move(black_level);

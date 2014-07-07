@@ -44,6 +44,9 @@ private:
    float score_no_queen, score_per_bee_freedom;
    float victory_score, draw_score;
    
+   float alphabeta(bool player, int depth, float alpha, float beta,
+                   int initial_depth, turn* best_move);
+   
 public:
    
    ai(ruleset rules);

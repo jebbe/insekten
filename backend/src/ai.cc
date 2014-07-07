@@ -41,7 +41,6 @@ float ai::eval(bool evalcolor, bool print) {
    if(whitew && !evalcolor) return victory_score;
    
    float index[4] = {0., 0., 0., 0.};
-   int sign;
    for(int sign=-1; sign<=1; sign+=2) {
       
       bool color = ((sign == -1) ? !evalcolor : evalcolor);
@@ -120,39 +119,60 @@ float ai::eval(bool evalcolor, bool print) {
 }
 
 
-bool ai::generate_move(int max_depth) {
+float ai::alphabeta(bool player, int depth, float alpha, float beta,
+                    int initial_depth, turn* best_move) {
+   
+   if (depth == 0 || game_over()) {
+      return eval(player, false);
+   }
+   
+   float maxValue = alpha;
    vector<turn*> turns;
    find_all_moves(whose_turn(), turns);
-   if(turns.size() > 0) {
-      
-      // Choose the move with the highest score
-      float highest = - std::numeric_limits<float>::max();
-      float points;
-      int chosen = 0;
-      for(int ii=0; ii<int(turns.size()); ii++) {
-         perform_move(turns[ii]);
-         points = eval(!whose_turn(), false); // !whose_turn() is me here!
-         if(points > highest) {
-            chosen = ii;
-            highest = points;
-         }
-         undo_move();
-      }
-      if(has_stored_move) {
-         cerr << "Error: Cannot generate another move." << endl;
-         exit(-1);
-      }
-      has_stored_move = true;
-      stored_move = new turn(*turns[chosen]);
-      delete_moves(turns);
-      return true;
-   } else {
-      delete_moves(turns);
-      return false;
+   if(turns.size() == 0) {
+      return eval(player, false);
    }
+   
+   for(int ii=0; ii<int(turns.size()); ii++) {
+      perform_move(turns[ii]);
+      float value = -alphabeta(!player, depth-1, -beta, -maxValue, 
+                               initial_depth, best_move);
+      undo_move();
+      
+      // Do we have a new best move?
+      if(value > maxValue) {
+         maxValue = value;
+         if (maxValue >= beta)             
+            break;          
+         if (depth == initial_depth)
+            delete best_move;
+            best_move = new turn (*turns[ii]);
+      }
+   }
+   delete_moves(turns);
+   return maxValue;
 }
 
 
+bool ai::generate_move(int max_depth) {
+   
+   stored_move = new turn;
+   int bewertung = alphabeta(whose_turn(), max_depth, 
+                             -std::numeric_limits<float>::max(), 
+                             std::numeric_limits<float>::max(),
+                             max_depth, stored_move);
+   if(stored_move->from == 0 &&
+      stored_move->to == 0 &&
+      stored_move->kind == empty &&
+      stored_move->color == false) {
+         cerr << "Error: Cannot generate a move." << endl;
+         exit(-1);
+   }
+   has_stored_move = true;
+}
+
+
+   
 bool ai::perform_ai_move() {
    if(has_stored_move) {
       perform_move(stored_move);
