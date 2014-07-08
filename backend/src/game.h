@@ -17,9 +17,10 @@
 using namespace std;
 
 enum ruleset : int {
-   m = 1,
-   l = 2,
-   p = 4
+   m = 1, // mosquito
+   l = 2, // ladybug
+   p = 4, // pillbug
+   nqf = 8 // Cannot place queen first
 };
 
 inline ruleset operator|(ruleset a, ruleset b) {

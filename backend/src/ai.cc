@@ -157,10 +157,10 @@ float ai::alphabeta(bool player, int depth, float alpha, float beta,
 bool ai::generate_move(int max_depth) {
    
    stored_move = new turn;
-   int bewertung = alphabeta(whose_turn(), max_depth, 
-                             -std::numeric_limits<float>::max(), 
-                             std::numeric_limits<float>::max(),
-                             max_depth, stored_move);
+   alphabeta(whose_turn(), max_depth, 
+             -std::numeric_limits<float>::max(), 
+             std::numeric_limits<float>::max(),
+             max_depth, stored_move);
    if(stored_move->from == 0 &&
       stored_move->to == 0 &&
       stored_move->kind == empty &&

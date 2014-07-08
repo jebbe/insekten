@@ -140,13 +140,48 @@ void MainWindow::about() {
 
 
 void MainWindow::newGame() {
+   
+   // Set up the "new game" window
    if(newgamedialog_open) return;
    newgamedialog_open = true;
    newgamedialog = new QDialog(this);
    ui = new Ui::NewGame;
    ui->setupUi(newgamedialog);
-   newgamedialog->setFixedSize(270,308); 
+   newgamedialog->setFixedSize(351,306); 
+   newgamedialog->setWindowFlags(((newgamedialog->windowFlags() | 
+                                   Qt::CustomizeWindowHint) &
+                                   ~Qt::WindowCloseButtonHint) );
+
+   // Load settings
+   QSettings settings("hive", "insekten");
+   bool rules_m = settings.value("rules_m", "").toBool();
+   bool rules_l = settings.value("rules_l", "").toBool();
+   bool rules_p = settings.value("rules_p", "").toBool();
+   bool rules_nqf = settings.value("rules_nqf", "").toBool();
+   int ai_strength = settings.value("ai_strength", "").toInt();
+   bool white_human = settings.value("white_human", "").toBool();
+   bool black_human = settings.value("black_human", "").toBool();
+   
+   // Apply settings
+   if(rules_m) ui->mosquito_check->setChecked(true);
+   else ui->mosquito_check->setChecked(false);
+   if(rules_l) ui->ladybug_check->setChecked(true);
+   else ui->ladybug_check->setChecked(false);
+   if(rules_p) ui->pillbug_check->setChecked(true);
+   else ui->pillbug_check->setChecked(false);
+   if(rules_nqf) ui->queen_first_check->setChecked(true);
+   else ui->queen_first_check->setChecked(false);
+   if(ai_strength == 1) ui->easy->setChecked(true);
+   if(ai_strength == 2) ui->medium->setChecked(true);
+   if(ai_strength == 3) ui->hard->setChecked(true);
+   if(ai_strength == 4) ui->expert->setChecked(true);
+   if(white_human) ui->white_human->setChecked(true);
+   else ui->white_human->setChecked(false);
+   if(black_human) ui->black_human->setChecked(true);
+   else ui->black_human->setChecked(false);
+   
    newgamedialog->show();
+   
    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(beginGame()));
    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(abortBeginGame()));
 }
@@ -174,6 +209,20 @@ void MainWindow::abortBeginGame() {
 
 
 void MainWindow::beginGame() {
+
+   // Save settings
+   QSettings settings("hive", "insekten");
+   settings.setValue("rules_m", ui->mosquito_check->isChecked());
+   settings.setValue("rules_l", ui->ladybug_check->isChecked());
+   settings.setValue("rules_p", ui->pillbug_check->isChecked());
+   settings.setValue("rules_nqf", ui->queen_first_check->isChecked());
+   if(ui->easy->isChecked()) settings.setValue("ai_strength", 1);
+   if(ui->medium->isChecked()) settings.setValue("ai_strength", 2);
+   if(ui->hard->isChecked()) settings.setValue("ai_strength", 3);
+   if(ui->expert->isChecked()) settings.setValue("ai_strength", 4);
+   settings.setValue("white_human", ui->white_human->isChecked());
+   settings.setValue("black_human", ui->black_human->isChecked());
+    
    // Clear the running game
    if(game_active) {
       delete game;
@@ -196,13 +245,26 @@ void MainWindow::beginGame() {
    my_rules += (int(ui->mosquito_check->isChecked()));
    my_rules += (2*int(ui->ladybug_check->isChecked()));
    my_rules += (4*int(ui->pillbug_check->isChecked()));
+   my_rules += (8*int(ui->queen_first_check->isChecked()));
    game = new ai(ruleset(my_rules));
 
    white_human = ui->white_human->isChecked();
    black_human = ui->black_human->isChecked();
-   white_level = ui->white_level->value();
-   black_level = ui->black_level->value();
    
+   if(ui->easy->isChecked()) {
+      white_level = 1;
+      black_level = 1;
+   } else if(ui->medium->isChecked()) {
+      white_level = 2;
+      black_level = 2;
+   } else if(ui->hard->isChecked()) {
+      white_level = 3;
+      black_level = 3;
+   } else {
+      white_level = 4;
+      black_level = 4;
+   }
+      
    // Clear the new game dialog
    newgamedialog->close();
    newgamedialog_open = false;
@@ -383,7 +445,11 @@ void MainWindow::mainPieceSelected(int xx, int yy) {
      } else {
         
          // We're placing a new tile
-         game->place(my_move->origin_type, ii, jj);
+         if(((game->our_rules() & nqf) != nqf) || // Take care of the "can't place queen first" rule
+              game->turn_count() > 1 || 
+              my_move->origin_type != queen) {
+            game->place(my_move->origin_type, ii, jj);
+         }
          resetClicked();
          
          // We just moved. Make the computer move now

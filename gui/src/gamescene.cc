@@ -83,8 +83,13 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
    if(my_move->origin_selected) {
       
       if(my_move->origin_type != empty) {
-         if(!game->need_to_place_queen() || my_move->origin_type == queen)
-            targets = game->can_place_at();
+         if(!game->need_to_place_queen() || my_move->origin_type == queen) {
+            if(((game->our_rules() & nqf) != nqf) || // Take care of the "can't place queen first" rule
+                 game->turn_count() > 1 || 
+                 my_move->origin_type != queen) {
+               targets = game->can_place_at();
+            }
+         }
       } else {
          targets = game->can_move_to(my_move->origin_x, my_move->origin_y);
       }
