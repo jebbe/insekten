@@ -27,7 +27,7 @@ public:
 
    GameScene(QObject *parent = 0);
 
-   void redraw(ai *game, uiMove *my_move);
+   void redraw(ai *game, uiMove *my_move, bool waiting_message = false);
 
    int SceneToGameX(int xx, int yy);
    int SceneToGameY(int xx, int yy);

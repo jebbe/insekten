@@ -66,7 +66,7 @@ int GameScene::gameToSceneY(int xx, int yy, int stackheight) {
 // DRAW THE SCENE //
 ////////////////////
 
-void GameScene::redraw(ai *game, uiMove *my_move) {
+void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    
    this->clear();
 
@@ -195,6 +195,16 @@ void GameScene::redraw(ai *game, uiMove *my_move) {
          item = this->addPixmap(image);
          item->setPos(ii, jj);
       }
+   }
+   
+   // Draw a "Computer is thinking" message
+   if(waiting_message) {
+      QGraphicsTextItem * text_item = new QGraphicsTextItem;
+      text_item->setPlainText("Computer is thinking...");
+      text_item->setDefaultTextColor(Qt::red);
+      text_item->setFont(QFont("Arial[Helvetica]", 18, QFont::Bold));
+      this->addItem(text_item);
+      text_item->setPos(MAIN_SIZE/2-160, MAIN_SIZE/2-40);
    }
    
    game->clear_2d_vector(targets);

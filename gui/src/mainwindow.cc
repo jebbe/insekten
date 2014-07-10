@@ -176,9 +176,9 @@ void MainWindow::newGame() {
    if(ai_strength == 3) ui->hard->setChecked(true);
    if(ai_strength == 4) ui->expert->setChecked(true);
    if(white_human) ui->white_human->setChecked(true);
-   else ui->white_human->setChecked(false);
+   else ui->white_computer->setChecked(true);
    if(black_human) ui->black_human->setChecked(true);
-   else ui->black_human->setChecked(false);
+   else ui->black_computer->setChecked(true);
    
    newgamedialog->show();
    
@@ -295,19 +295,21 @@ void MainWindow::beginGame() {
 void MainWindow::computerMove(bool color) {
    
    // Redraw the scene before going unresponsive because of searching
-//    sceneWhite->redraw(game, my_move);
-//    sceneBlack->redraw(game, my_move);
-//    sceneMain->redraw(game, my_move);
+   sceneWhite->redraw(game, my_move);
+   sceneBlack->redraw(game, my_move);
+   sceneMain->redraw(game, my_move, true);
 
-   // Could potentially put this into a new thread and display a waiting message
+   QCoreApplication::processEvents();
+   QApplication::processEvents();
+
+//    QFuture<bool> future;
+//    if(color) future = QtConcurrent::run(game, &ai::generate_move, black_level);
+//    else future = QtConcurrent::run(game, &ai::generate_move, white_level);
+//    future.waitForFinished();
    
-   if(color) game->generate_move(black_level);
-   else game->generate_move(white_level);
-   
-//    cout << game->ai_move_kind() << endl;
-//    cout << game->ai_move_x_from() << endl;
-//    cout << game->ai_move_x_to() << endl;
-   
+   game->generate_move(black_level);
+   game->generate_move(white_level);
+
    game->perform_ai_move();
 
    my_move->computer_just_moved = true;
