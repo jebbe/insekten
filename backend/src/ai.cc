@@ -120,7 +120,7 @@ float ai::eval(bool evalcolor, bool print) {
 
 
 float ai::alphabeta(bool player, int depth, float alpha, float beta,
-                    int initial_depth, turn* best_move) {
+                    int initial_depth, turn* &best_move) {
    
    if (depth == 0 || game_over()) {
       return eval(player, false);

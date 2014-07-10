@@ -304,6 +304,10 @@ void MainWindow::computerMove(bool color) {
    if(color) game->generate_move(black_level);
    else game->generate_move(white_level);
    
+//    cout << game->ai_move_kind() << endl;
+//    cout << game->ai_move_x_from() << endl;
+//    cout << game->ai_move_x_to() << endl;
+   
    game->perform_ai_move();
 
    my_move->computer_just_moved = true;
