@@ -10,13 +10,14 @@ ai::ai(ruleset rules) : game(rules) {
    file.open("eval.txt");
    string junk;
    getline(file, junk);
-   file >> weight[0] >> weight[1] >> weight[2] >> junk;
+   file >> weight[0] >> weight[1] >> junk;
    for(int ii=0; ii<8; ii++) {
-      file >> score[ii][0] >> score[ii][1] >> score[ii][2] >> score[ii][3]
-           >> score[ii][4] >> junk;
+      file >> score[ii][0] >> score[ii][1] >> score[ii][2]
+           >> score[ii][3] >> junk;
    }
    file >> score_per_bee_freedom >> junk;
    file >> score_no_queen >> junk;
+   file >> placement_weight >> junk;
    file >> victory_score >> junk;
    file >> draw_score >> junk;
    file.close();
@@ -88,22 +89,15 @@ float ai::eval(bool evalcolor, bool print) {
       
       // Number of placements
       find_all_placement_moves(color, turns);
-      int kind_[NUM_TYPE] = {0,0,0,0,0,0,0,0};
-      for(int ii=0; ii<int(turns.size()); ii++) {
-         kind_[int(turns[ii]->kind)]++;
-      }
-      for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
-         index[2] += float(sign) * weight[1] 
-                     * float(kind_[int(ii)]) * score[ii][2];
-      }
+      index[2] += float(sign) * placement_weight * float(turns.size());
       delete_moves(turns);
       turns.clear();
       
       // Number of pieces in stock
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
-         index[3] += float(sign) * weight[2] * float(stock[color][int(ii)])
-                          * (score[ii][3] + score[ii][4])
-                          / (float(stock[color][int(ii)]) + score[ii][4]);
+         index[3] += float(sign) * weight[1] * float(stock[color][int(ii)])
+                          * (score[ii][2] + score[ii][3])
+                          / (float(stock[color][int(ii)]) + score[ii][3]);
       }
       
    }
@@ -116,6 +110,33 @@ float ai::eval(bool evalcolor, bool print) {
    }
    return index[0] + index[1] + index[2] + index[3]; 
    
+}
+
+// I want to sort the moves with highest values to the first places, so I should
+// use (ii->val > jj->val). However, we have performed a move and have thus 
+// flipped whose_turn(), so we actually sort the smallest moves first, (which
+// are the highest ones for myself).
+bool compare_function(move_sorter *ii, move_sorter *jj) { 
+   return (ii->val < jj->val); 
+}
+
+void ai::sort_moves(vector<turn*> &turns) {
+   vector<move_sorter*> all_turns;
+   for(int ii=0; ii<turns.size(); ii++) {
+      move_sorter *my_move = new move_sorter;
+      my_move->move = new turn(*turns[ii]);
+      perform_move(turns[ii]);
+      my_move->val = eval(whose_turn(), false);
+      undo_move();
+      all_turns.push_back(my_move);
+   }
+   delete_moves(turns);
+   turns.clear();
+   sort (all_turns.begin(), all_turns.end(), compare_function);
+   for(int ii=0; ii<all_turns.size(); ii++) {
+      turns.push_back(new turn(*all_turns[ii]->move));
+      delete all_turns[ii];
+   }
 }
 
 
@@ -132,7 +153,9 @@ float ai::alphabeta(int depth, float alpha, float beta,
    if(turns.size() == 0) {
       return eval(whose_turn(), false);
    }
-   
+
+   sort_moves(turns);
+
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);
       float value = -alphabeta(depth-1, -beta, -maxValue, 
@@ -170,6 +193,7 @@ bool ai::generate_move(int max_depth) {
          exit(-1);
    }
    has_stored_move = true;
+   return true;
 }
 
 

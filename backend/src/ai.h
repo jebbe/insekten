@@ -10,10 +10,22 @@
 #include <fstream>
 #include <string>
 #include <limits>
+#include <algorithm>
 
 #include "game.h"
 
 using namespace std;
+
+// A data structure to help sort our moves by their eval-value. Needed for
+// efficient alpha-beta pruning
+struct move_sorter {
+   turn *move;
+   float val;
+};
+
+// And a function to define an order on the moves for sorting.
+bool compare_function(move_sorter *ii, move_sorter *jj);
+
 
 class ai : public game {
 
@@ -28,24 +40,30 @@ private:
    // kind: What insect? Refers to the type enum.
    // term: 0: Movements
    //       1: Mvmnts dgr
-   //       2: Placements
-   //       3: Stock
-   //       4: Stock degrading
-   float score[8][5];
+   //       2: Stock
+   //       3: Stock degrading
+   float score[8][4];
    
    // weight[term]
    // term: 0: Movements
-   //       1: Placements
-   //       2: Stock
-   float weight[3];
+   //       1: Stock
+   float weight[2];
    
    // How many points for not setting the queen, how many for every free
    // tile around the bee?
    float score_no_queen, score_per_bee_freedom;
+   
    float victory_score, draw_score;
    
+   float placement_weight;
+   
+   // Minimax with alpha-beta-pruning
    float alphabeta(int depth, float alpha, float beta,
                    int initial_depth, turn* &best_move);
+   
+   // To increase the chance of cutoffs, we presort the moves by evaluating
+   // them with the evaluation function. As of yet, this is just a bubble sort.
+   void sort_moves(vector<turn*> &turns);
    
 public:
    

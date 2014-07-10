@@ -1,15 +1,16 @@
-Movements | Mvmnts dgr | Placements | Stock | Stock degrading            
- 5                        1            5                      Total       
- 5           5            1            -2      100            Queen       
- 0.5         10           1            0       100            Ant         
- 1           5            1            1       100            Spider      
- 1           5            1            1       100            Cricket     
- 1           5            1            1       100            Beetle      
- 0.8         5            1            1       100            Ladybug     
- 0.5         8            1            1       100            Mosquito    
- 5           5            1            1       100            Pillbug     
-50 Score_per_free_bee_neighbor
-150 Score_for_unplaced_queen
+Movements | Movements degrading | Stock | Stock degrading            
+ 4                                  10                      Total       
+ 50          5                      1       100            Queen       
+ 0.5         10                     1       100            Ant         
+ 1           5                      1       100            Spider      
+ 1           5                      1       100            Cricket     
+ 1           5                      1       100            Beetle      
+ 0.8         5                      1       100            Ladybug     
+ 0.5         5                      1       100            Mosquito    
+ 3           5                      1       100            Pillbug     
+80 Score_per_free_bee_neighbor
+100 Score_for_unplaced_queen
+2 placement_weight
 1e4 Victory
 -5 draw
 
@@ -23,7 +24,7 @@ the current board position based on four terms:
 4) The number of pieces that have not been placed.
 5) Winning/losing the game or playing draw.
 
-Terms 2, 3 and 4 are weighted with a global factor (first row of the table). In 
+Terms 2 and 4 are weighted with a global factor (first row of the table), and, in 
 addition, the contributions are weighted with a factor for each piece, so that
 you can make e.g. the ants free movements less valuable.
 
@@ -40,8 +41,8 @@ The terms are calculated as folows:
    where N is the move counter. mvmnts_dgr gives you the opportunity to make 
    flexibility less valuable later in the game.
 
-3) This term just adds up all the possible placments and weighs them according to 
-   their piece weight and global weight.
+3) This term just adds up all the number of tiles we can place new pieces on 
+   nad weighs them according to the placement_weight.
 
 4) This term is calculated as 
       Stock * sum_over_pieces( (#pieces * (Stock_piece + stock_dgr) / (#pieces + stock_dgr) ) )
@@ -52,5 +53,6 @@ The terms are calculated as folows:
 5) Victory is the score we get for winning the game, draw can e.g. be set negative to
    make the AI try and avoid draw.
    
-   
-   
+The higher stock_degrading, the less valuable additional unplaced pieces.
+The higher movements_degrading, the faster the movability of a piece becomes less 
+valuable during the game.
