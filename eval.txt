@@ -1,5 +1,5 @@
 Movements | Movements degrading | Stock | Stock degrading            
- 4                                  10                      Total       
+ 4                                  6                      Total       
  50          5                      1       100            Queen       
  0.5         10                     1       100            Ant         
  1           5                      1       100            Spider      
@@ -13,6 +13,8 @@ Movements | Movements degrading | Stock | Stock degrading
 2 placement_weight
 1e4 Victory
 -5 draw
+40 beetle_on_pillpug
+100 beetle_on_queen
 
 This table determines the evaluation function, the core of the AI. It evaluates
 the current board position based on four terms:
@@ -23,6 +25,7 @@ the current board position based on four terms:
    piece/destination tile is considered one placement.
 4) The number of pieces that have not been placed.
 5) Winning/losing the game or playing draw.
+6) Extra terms
 
 Terms 2 and 4 are weighted with a global factor (first row of the table), and, in 
 addition, the contributions are weighted with a factor for each piece, so that
@@ -52,6 +55,10 @@ The terms are calculated as folows:
       
 5) Victory is the score we get for winning the game, draw can e.g. be set negative to
    make the AI try and avoid draw.
+
+6) Extra points for:
+   - Beetles on top the pillbug
+   - Beetles on top of the queen
    
 The higher stock_degrading, the less valuable additional unplaced pieces.
 The higher movements_degrading, the faster the movability of a piece becomes less 

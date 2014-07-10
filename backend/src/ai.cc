@@ -20,7 +20,13 @@ ai::ai(ruleset rules) : game(rules) {
    file >> placement_weight >> junk;
    file >> victory_score >> junk;
    file >> draw_score >> junk;
+   file >> beetle_on_pillbug >> junk;
+   file >> beetle_on_queen >> junk;
    file.close();
+            cout << "HUHU " << beetle_on_pillbug << endl;
+            cout << "HUHU " << beetle_on_queen << endl;
+
+   
 }
 
 
@@ -41,9 +47,11 @@ float ai::eval(bool evalcolor, bool print) {
    if(whitew && evalcolor) return -victory_score;
    if(whitew && !evalcolor) return victory_score;
    
-   float index[4] = {0., 0., 0., 0.};
+   float index[5] = {0., 0., 0., 0., 0.};
    for(int sign=-1; sign<=1; sign+=2) {
       
+      // We evaluate for both players and add up their score with different
+      // signs.
       bool color = ((sign == -1) ? !evalcolor : evalcolor);
      
       vector<turn*> turns;
@@ -100,15 +108,39 @@ float ai::eval(bool evalcolor, bool print) {
                           / (float(stock[color][int(ii)]) + score[ii][3]);
       }
       
+      // Extra points for beetles on pillbugs / queens
+      if(stock[int(color)][pillbug] == 0) {
+         board* it = my_board;
+         while(it->ontop == 0 || 
+               it->ontop->kind != pillbug || 
+               it->ontop->color != color) it = it->next;
+         if(it->ontop->ontop != 0) {
+            index[4] += - float(sign) * beetle_on_pillbug;
+         }
+      }
+      if(stock[int(color)][queen] == 0) {
+         board* it = my_board;
+         while(it->ontop == 0 || 
+               it->ontop->kind != queen || 
+               it->ontop->color != color) it = it->next;
+         if(it->ontop->ontop != 0) {
+            index[4] += - float(sign) * beetle_on_queen;
+         }
+      }
+      
    }
+   
    if(print) {
-      cout << "Total score: " << index[0] + index[1] + index[2] + index[3] 
+      cout << "Total score: " << index[0] + index[1] + index[2] 
+                               + index[3] + index[4]
            << " | bee free neighbors: " << index[0] 
            << " | # moves around: " << index[1] 
            << " | # placements: " << index[2] 
-           << " | # reserve: " << index[3] << endl;
+           << " | # reserve: " << index[3]
+           << " | # extra: " << index[4] << endl;
    }
-   return index[0] + index[1] + index[2] + index[3]; 
+   
+   return index[0] + index[1] + index[2] + index[3] + index[4]; 
    
 }
 
@@ -153,8 +185,8 @@ float ai::alphabeta(int depth, float alpha, float beta,
    if(turns.size() == 0) {
       return eval(whose_turn(), false);
    }
-
-   sort_moves(turns);
+   
+   if(depth != 1) sort_moves(turns);
 
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);

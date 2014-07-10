@@ -53,9 +53,14 @@ private:
    // tile around the bee?
    float score_no_queen, score_per_bee_freedom;
    
+   // How bad do we want to win / avoid a draw?
    float victory_score, draw_score;
    
+   // How important is being able to place new pieces?
    float placement_weight;
+   
+   // Extra points
+   float beetle_on_pillbug, beetle_on_queen;
    
    // Minimax with alpha-beta-pruning
    float alphabeta(int depth, float alpha, float beta,
