@@ -119,23 +119,23 @@ float ai::eval(bool evalcolor, bool print) {
 }
 
 
-float ai::alphabeta(bool player, int depth, float alpha, float beta,
+float ai::alphabeta(int depth, float alpha, float beta,
                     int initial_depth, turn* &best_move) {
    
    if (depth == 0 || game_over()) {
-      return eval(player, false);
+      return eval(whose_turn(), false);
    }
    
    float maxValue = alpha;
    vector<turn*> turns;
    find_all_moves(whose_turn(), turns);
    if(turns.size() == 0) {
-      return eval(player, false);
+      return eval(whose_turn(), false);
    }
    
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);
-      float value = -alphabeta(!player, depth-1, -beta, -maxValue, 
+      float value = -alphabeta(depth-1, -beta, -maxValue, 
                                initial_depth, best_move);
       undo_move();
       
@@ -144,9 +144,10 @@ float ai::alphabeta(bool player, int depth, float alpha, float beta,
          maxValue = value;
          if (maxValue >= beta)             
             break;          
-         if (depth == initial_depth)
+         if (depth == initial_depth) {
             delete best_move;
             best_move = new turn (*turns[ii]);
+         }
       }
    }
    delete_moves(turns);
@@ -157,7 +158,7 @@ float ai::alphabeta(bool player, int depth, float alpha, float beta,
 bool ai::generate_move(int max_depth) {
    
    stored_move = new turn;
-   alphabeta(whose_turn(), max_depth, 
+   alphabeta(max_depth, 
              -std::numeric_limits<float>::max(), 
              std::numeric_limits<float>::max(),
              max_depth, stored_move);

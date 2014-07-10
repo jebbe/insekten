@@ -204,7 +204,7 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
       text_item->setDefaultTextColor(Qt::red);
       text_item->setFont(QFont("Arial[Helvetica]", 18, QFont::Bold));
       this->addItem(text_item);
-      text_item->setPos(MAIN_SIZE/2-160, MAIN_SIZE/2-40);
+      text_item->setPos(MAIN_SIZE/2-130, MAIN_SIZE/2-40);
    }
    
    game->clear_2d_vector(targets);
