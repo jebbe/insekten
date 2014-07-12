@@ -14,6 +14,8 @@
 
 #include "game.h"
 
+#define DEBUG
+
 using namespace std;
 
 // A data structure to help sort our moves by their eval-value. Needed for
@@ -30,6 +32,10 @@ bool compare_function(move_sorter *ii, move_sorter *jj);
 class ai : public game {
 
 private:
+
+#ifdef DEBUG
+   int ncalls;
+#endif
    
    bool has_stored_move;
    turn* stored_move;

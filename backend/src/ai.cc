@@ -23,10 +23,7 @@ ai::ai(ruleset rules) : game(rules) {
    file >> beetle_on_pillbug >> junk;
    file >> beetle_on_queen >> junk;
    file.close();
-            cout << "HUHU " << beetle_on_pillbug << endl;
-            cout << "HUHU " << beetle_on_queen << endl;
 
-   
 }
 
 
@@ -109,7 +106,7 @@ float ai::eval(bool evalcolor, bool print) {
       }
       
       // Extra points for beetles on pillbugs / queens
-      if(stock[int(color)][pillbug] == 0) {
+      if((rules & p) == p && stock[int(color)][pillbug] == 0) {
          board* it = my_board;
          while(it->ontop == 0 || 
                it->ontop->kind != pillbug || 
@@ -129,7 +126,8 @@ float ai::eval(bool evalcolor, bool print) {
       }
       
    }
-   
+
+#ifdef DEBUG
    if(print) {
       cout << "Total score: " << index[0] + index[1] + index[2] 
                                + index[3] + index[4]
@@ -139,6 +137,7 @@ float ai::eval(bool evalcolor, bool print) {
            << " | # reserve: " << index[3]
            << " | # extra: " << index[4] << endl;
    }
+#endif
    
    return index[0] + index[1] + index[2] + index[3] + index[4]; 
    
@@ -174,7 +173,14 @@ void ai::sort_moves(vector<turn*> &turns) {
 
 float ai::alphabeta(int depth, float alpha, float beta,
                     int initial_depth, turn* &best_move) {
-   
+
+#ifdef DEBUG
+   ncalls++;
+   cout << "Call No: " << ncalls << "; "
+        << "Total depth: " << initial_depth << "; "
+        << "Current depth: " << depth << endl;
+#endif
+
    if (depth == 0 || game_over()) {
       return eval(whose_turn(), false);
    }
@@ -186,7 +192,7 @@ float ai::alphabeta(int depth, float alpha, float beta,
       return eval(whose_turn(), false);
    }
    
-   if(depth != 1) sort_moves(turns);
+   //if(depth != 1) sort_moves(turns);
 
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);
@@ -211,7 +217,10 @@ float ai::alphabeta(int depth, float alpha, float beta,
 
 
 bool ai::generate_move(int max_depth) {
-   
+
+#ifdef DEBUG
+   ncalls = 0;
+#endif
    stored_move = new turn;
    alphabeta(max_depth, 
              -std::numeric_limits<float>::max(), 
