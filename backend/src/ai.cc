@@ -52,6 +52,21 @@ float ai::eval(bool evalcolor, bool print) {
       bool color = ((sign == -1) ? !evalcolor : evalcolor);
      
       vector<turn*> turns;
+      
+      // Find the queen and the pillbug
+      board* my_queen = my_board;
+      if(stock[int(color)][queen] == 0) {
+         while(my_queen->ontop == 0 || 
+               my_queen->ontop->kind != queen || 
+               my_queen->ontop->color != color) my_queen = my_queen->next;
+      }
+      
+      board* my_pillbug = my_board;
+      if((rules & p) == p && stock[int(color)][pillbug] == 0) {
+         while(my_pillbug->ontop == 0 || 
+               my_pillbug->ontop->kind != queen || 
+               my_pillbug->ontop->color != color) my_pillbug = my_pillbug->next;
+      }
 
       // Count number of pieces (not including any stacked ones - for simplicity
       int ii = 0;
@@ -65,12 +80,8 @@ float ai::eval(bool evalcolor, bool print) {
       
       // Free neighboring tiles of the queen bee
       if(stock[int(color)][queen] == 0) {
-         board* it = my_board;
-         while(it->ontop == 0 || 
-               it->ontop->kind != queen || 
-               it->ontop->color != color) it = it->next;
          for(int ii=0; ii<6; ii++) {
-            if(it->nbr[ii]->ontop == 0) {
+            if(my_queen->nbr[ii]->ontop == 0) {
                index[0] += float(sign) * score_per_bee_freedom;
             }
          }
@@ -107,20 +118,12 @@ float ai::eval(bool evalcolor, bool print) {
       
       // Extra points for beetles on pillbugs / queens
       if((rules & p) == p && stock[int(color)][pillbug] == 0) {
-         board* it = my_board;
-         while(it->ontop == 0 || 
-               it->ontop->kind != pillbug || 
-               it->ontop->color != color) it = it->next;
-         if(it->ontop->ontop != 0) {
+         if(my_pillbug->ontop->ontop != 0) {
             index[4] += - float(sign) * beetle_on_pillbug;
          }
       }
       if(stock[int(color)][queen] == 0) {
-         board* it = my_board;
-         while(it->ontop == 0 || 
-               it->ontop->kind != queen || 
-               it->ontop->color != color) it = it->next;
-         if(it->ontop->ontop != 0) {
+         if(my_queen->ontop->ontop != 0) {
             index[4] += - float(sign) * beetle_on_queen;
          }
       }
