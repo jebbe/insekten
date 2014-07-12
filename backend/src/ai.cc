@@ -176,15 +176,12 @@ float ai::alphabeta(int depth, float alpha, float beta,
 
 #ifdef DEBUG
    ncalls++;
-   cout << "Call No: " << ncalls << "; "
-        << "Total depth: " << initial_depth << "; "
-        << "Current depth: " << depth << endl;
 #endif
 
    if (depth == 0 || game_over()) {
       return eval(whose_turn(), false);
    }
-   
+
    float maxValue = alpha;
    vector<turn*> turns;
    find_all_moves(whose_turn(), turns);
@@ -192,7 +189,7 @@ float ai::alphabeta(int depth, float alpha, float beta,
       return eval(whose_turn(), false);
    }
    
-   //if(depth != 1) sort_moves(turns);
+   if(depth != 1) sort_moves(turns);
 
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);
@@ -217,9 +214,11 @@ float ai::alphabeta(int depth, float alpha, float beta,
 
 
 bool ai::generate_move(int max_depth) {
-
+   
 #ifdef DEBUG
    ncalls = 0;
+   clock_t t_init, t_final;
+   t_init=clock();
 #endif
    stored_move = new turn;
    alphabeta(max_depth, 
@@ -234,6 +233,14 @@ bool ai::generate_move(int max_depth) {
          exit(-1);
    }
    has_stored_move = true;
+#ifdef DEBUG
+   cout << "Recursive search got involved " << ncalls << " times; "
+        << "total depth: " << max_depth << ".  ";
+   t_final = clock() - t_init;
+   cout << "Time to create move: " 
+        << (double)t_final / ((double)CLOCKS_PER_SEC) << endl;
+#endif
+
    return true;
 }
 

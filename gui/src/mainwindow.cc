@@ -307,8 +307,8 @@ void MainWindow::computerMove(bool color) {
 //    else future = QtConcurrent::run(game, &ai::generate_move, white_level);
 //    future.waitForFinished();
    
-   game->generate_move(black_level);
-   game->generate_move(white_level);
+   if(color) game->generate_move(black_level);
+   else game->generate_move(white_level);
 
    game->perform_ai_move();
 

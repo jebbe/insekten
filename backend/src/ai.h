@@ -5,16 +5,20 @@
 #ifndef ai_h
 #define ai_h
 
+#define DEBUG
+
 #include <iostream>
 #include <vector>
 #include <fstream>
 #include <string>
 #include <limits>
 #include <algorithm>
+#ifdef DEBUG
+#include <time.h>
+#endif
 
 #include "game.h"
 
-#define DEBUG
 
 using namespace std;
 
