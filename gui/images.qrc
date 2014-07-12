@@ -20,6 +20,7 @@
     <file>images/from_shade.png</file>
     <file>images/to_shade.png</file>
     <file>images/undo.png</file>
+    <file>images/pass.png</file>
     <file>images/newgame.png</file>
 </qresource>
 </RCC>

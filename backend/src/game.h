@@ -47,7 +47,7 @@ private:
    
    // Help figuring out whether somebody won
    bool queen_surrounded(bool color);
-   bool no_legal_move(bool color);
+   //bool no_legal_move(bool color);
 
 // These routines use the internal data structures and are meant to be used by
 // the AI
@@ -59,7 +59,7 @@ protected:
    // Keep track of the not-yet-placed pieces
    int stock[2][NUM_TYPE];
 
-   // List all the possible moves of a piece
+   // List all the possible moves of all pieces
    void find_all_moves(bool color, vector<turn*> &turns);
    void find_all_placement_moves(bool color, vector<turn*> &turns);
    void find_all_movement_moves(bool color, vector<turn*> &turns);
@@ -119,6 +119,7 @@ public:
    bool move(int x_from, int y_from, int x_to, int y_to);
    bool place(type kind, int x_to, int y_to);
    bool undo();
+   bool pass();
    
 };
 

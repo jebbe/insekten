@@ -27,6 +27,7 @@ private slots:
    void newGame();
    void about();
    void undoMove();
+   void passMove();
    
    void beginGame();
    void abortBeginGame();
@@ -64,6 +65,7 @@ private:
 
    QAction *exitAction;
    QAction *undoAction;
+   QAction *passAction;
    QAction *aboutAction;
    QAction *newGameAction;
 

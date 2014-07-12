@@ -193,6 +193,10 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
       it->ontop->remove_duplicate_moves(turns);
    }
    
+   if(turns.size() == 0) {
+      turns.push_back(new turn(true));
+   }
+   
 }
 
 void game::delete_moves(vector<turn*> &turns) {
@@ -203,7 +207,7 @@ void game::delete_moves(vector<turn*> &turns) {
 }
    
 void game::perform_move(turn* go) {
-   if(go->kind != empty)
+   if(go->kind != empty && !go->pass)
       stock[whose_turn()][int(go->kind)]--;
    just_moved = go->to;
    just_moved_history.push_back(just_moved);
@@ -213,7 +217,7 @@ void game::perform_move(turn* go) {
 }
 
 void game::undo_move() {
-   if(history.back()->kind != empty) 
+   if(history.back()->kind != empty && !history.back()->pass) 
       stock[int(!whose_turn())][history.back()->kind]++;
    just_moved = just_moved_history.back();
    just_moved_history.pop_back();
@@ -239,15 +243,15 @@ bool game::queen_surrounded(bool color) {
    return false;
 }
 
-bool game::no_legal_move(bool color) {
-   if(whose_turn() != color) return false;
-   vector<turn*> turns;
-   find_all_moves(color, turns); // Creates a memory leak. No idea why!
-   int size = turns.size();
-   delete_moves(turns);
-   if(size == 0) return true;
-   return false;
-}
+// bool game::no_legal_move(bool color) {
+//    if(whose_turn() != color) return false;
+//    vector<turn*> turns;
+//    find_all_moves(color, turns); // Creates a memory leak. No idea why!
+//    int size = turns.size();
+//    delete_moves(turns);
+//    if(size == 0) return true;
+//    return false;
+// }
 
 
 /******************
@@ -375,23 +379,19 @@ bool game::buried_tiles(int xx, int yy) {
 
 // white: false / black: true
 bool game::game_over() {
-   return (queen_surrounded(true) || queen_surrounded(false) ||
-           no_legal_move(true) || no_legal_move(false));
+   return (queen_surrounded(true) || queen_surrounded(false));
 }
 
 bool game::white_wins() {
-   return ((queen_surrounded(false) && !queen_surrounded(true)) ||
-           (no_legal_move(true) && !no_legal_move(false)));
+   return (queen_surrounded(false) && !queen_surrounded(true));
 }
 
 bool game::black_wins() {
-   return ((queen_surrounded(true) && !queen_surrounded(false)) ||
-           (no_legal_move(false) && !no_legal_move(true)));
+   return (queen_surrounded(true) && !queen_surrounded(false));
 }
 
 bool game::is_draw() {
-   return ((queen_surrounded(true) && queen_surrounded(false)) ||
-           (no_legal_move(false) && no_legal_move(true)));
+   return (queen_surrounded(true) && queen_surrounded(false));
 }
 
 ruleset game::our_rules() {
@@ -515,6 +515,15 @@ bool game::place(type kind, int x_to, int y_to) {
 bool game::undo() {
    if(half_turns == 0) return false;
    undo_move();
+   return true;
+}
+
+bool game::pass() {
+   vector<turn*> turns;
+   find_all_moves(whose_turn(), turns);
+   if(turns.size() != 1) return false;
+   if(!turns[0]->pass) return false;
+   perform_move(turns[0]);
    return true;
 }
 

@@ -8,6 +8,7 @@ turn::turn() {
    this->to = 0;
    this->kind = empty;
    this->color = false;
+   this->pass = false;
 }
 
 turn::turn(board* from, board* to) {
@@ -15,6 +16,7 @@ turn::turn(board* from, board* to) {
    this->to = to;
    this->kind = empty;
    this->color = false;
+   this->pass = false;
 }
 
 turn::turn(type kind, bool color, board* to) {
@@ -22,6 +24,7 @@ turn::turn(type kind, bool color, board* to) {
    this->color = color;
    this->to = to;
    this->from = 0;
+   this->pass = false;
 }
 
 turn::turn(turn& other) {
@@ -29,12 +32,22 @@ turn::turn(turn& other) {
    this->color = other.color;
    this->to = other.to;
    this->from = other.from;
+   this->pass = other.pass;
+}
+
+turn::turn(bool pass) {
+   this->kind = empty;
+   this->color = false;
+   this->to = 0;
+   this->from = 0;
+   this->pass = true;
 }
 
 // TODO There's room for optimization here - instead of deleting and 
 // creating a piece we could just move pointers around.
 
 void turn::perform() {
+   if(pass) return;
    if(kind==empty) {
       // Move around
       piece *it = from->ontop;
@@ -54,6 +67,7 @@ void turn::perform() {
 }
 
 void turn::undo() {
+   if(pass) return;
    if(kind==empty) {
       // Move back
       piece *it = to->ontop;

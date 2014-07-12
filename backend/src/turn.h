@@ -26,6 +26,9 @@ public:
    board* from;
    board* to;
    
+   // Do I have to pass?
+   bool pass;
+   
    // I need a type when *from is zero, ie when we place a new piece
    type kind;
    bool color;
@@ -34,6 +37,7 @@ public:
    turn(type kind, bool color, board* to);
    turn();
    turn(turn& other);
+   turn(bool pass);
    
    // This moves the pieces around on the board
    void perform();

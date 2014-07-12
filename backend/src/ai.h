@@ -94,6 +94,7 @@ public:
    bool perform_ai_move();
    bool delete_ai_move();
    
+   bool ai_move_is_pass();
    type ai_move_kind();
    int ai_move_x_from();
    int ai_move_y_from();

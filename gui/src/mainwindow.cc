@@ -15,6 +15,7 @@ MainWindow::MainWindow() {
    my_move->origin_selected = false;
    my_move->dest_selected = false;
    my_move->computer_just_moved = false;
+   my_move->pass = false;
    
    createActions();
    createMenu();
@@ -103,6 +104,12 @@ void MainWindow::createActions() {
     connect(undoAction, SIGNAL(triggered()),
         this, SLOT(undoMove()));
 
+    passAction = new QAction(QIcon(":/images/pass.png"),
+                               tr("&Pass"), this);
+    passAction->setStatusTip(tr("Have to pass when unable to move"));
+    connect(passAction, SIGNAL(triggered()),
+        this, SLOT(passMove()));
+
     aboutAction = new QAction(tr("A&bout"), this);
     connect(aboutAction, SIGNAL(triggered()),
             this, SLOT(about()));
@@ -116,6 +123,7 @@ void MainWindow::createMenu() {
 
    editMenu = menuBar()->addMenu(tr("&Edit"));
    editMenu->addAction(undoAction);
+   editMenu->addAction(passAction);
 
    aboutMenu = menuBar()->addMenu(tr("&Help"));
    aboutMenu->addAction(aboutAction);
@@ -126,6 +134,7 @@ void MainWindow::createToolbar() {
    myToolBar = addToolBar(tr("Tools"));
    myToolBar->addAction(newGameAction);
    myToolBar->addAction(undoAction);
+   myToolBar->addAction(passAction);
 }
 
 //////////////////////////////////
@@ -196,6 +205,13 @@ void MainWindow::undoMove() {
    resetClicked();
 }
 
+
+void MainWindow::passMove() {
+   if(!game_active) return;
+   game->pass();
+   resetClicked();
+}
+
 /////////////////////////
 // CREATING A NEW GAME //
 /////////////////////////
@@ -229,6 +245,7 @@ void MainWindow::beginGame() {
    }
    my_move->origin_selected = false;
    my_move->dest_selected = false;
+   my_move->pass = false;
    
    // Could potentially make this work at some point - right now just cancel
    if(   ui->white_computer->isChecked() &&
@@ -311,21 +328,23 @@ void MainWindow::computerMove(bool color) {
    else game->generate_move(white_level);
 
    game->perform_ai_move();
-
-   my_move->computer_just_moved = true;
-   my_move->origin_selected = false;
-   //my_move->origin_color;
-   my_move->origin_type = game->ai_move_kind();
-   if(my_move->origin_type == empty) {
-      my_move->origin_x = game->ai_move_x_from();
-      my_move->origin_y = game->ai_move_y_from();
-   }
-   my_move->dest_selected = false;
-   //my_move->dest_color;
-   my_move->dest_type = game->ai_move_kind();
-   my_move->dest_x = game->ai_move_x_to();
-   my_move->dest_y = game->ai_move_y_to();
    
+   // Remember the move so we can draw it on the main scene
+   my_move->computer_just_moved = true;
+   if(game->ai_move_is_pass()) {
+      my_move->pass = true;
+   } else { 
+      my_move->origin_selected = false;
+      my_move->origin_type = game->ai_move_kind();
+      if(my_move->origin_type == empty) {
+         my_move->origin_x = game->ai_move_x_from();
+         my_move->origin_y = game->ai_move_y_from();
+      }
+      my_move->dest_selected = false;
+      my_move->dest_type = game->ai_move_kind();
+      my_move->dest_x = game->ai_move_x_to();
+      my_move->dest_y = game->ai_move_y_to();
+   }
    game->delete_ai_move();
 
 }
@@ -350,6 +369,7 @@ void MainWindow::whiteInventoryOriginSelected(int xx, int yy) {
    my_move->origin_type = kind;
    my_move->origin_color = false;
    my_move->dest_selected = false;
+   my_move->pass = false;
 
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
@@ -376,6 +396,7 @@ void MainWindow::blackInventoryOriginSelected(int xx, int yy) {
    my_move->origin_type = kind;
    my_move->origin_color = true;
    my_move->dest_selected = false;
+   my_move->pass = false;
 
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
@@ -390,6 +411,7 @@ void MainWindow::resetClicked() {
    my_move->origin_selected = false;
    my_move->dest_selected = false;
    my_move->computer_just_moved = false;
+   my_move->pass = false;
    
    sceneWhite->redraw(game, my_move);
    sceneBlack->redraw(game, my_move);
@@ -403,6 +425,7 @@ void MainWindow::initiateMove(int ii, int jj, bool color) {
       return;
    }
    
+   my_move->pass = false;
    my_move->origin_selected = true;
    my_move->origin_type = empty;
    my_move->origin_color = color;

@@ -80,7 +80,7 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    
    // Draw the TO markers on empty tiles
    vector<vector<int> > targets;
-   if(my_move->origin_selected) {
+   if(!my_move->pass && my_move->origin_selected) {
       
       if(my_move->origin_type != empty) {
          if(!game->need_to_place_queen() || my_move->origin_type == queen) {
@@ -125,7 +125,7 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    }
 
    // Draw the TO markers on occupied tiles
-   if(my_move->origin_selected) {
+   if(!my_move->pass && my_move->origin_selected) {
       
       for(int kk=0; kk<int(targets.size()); kk++) {
          
@@ -146,7 +146,8 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    }
    
    // Draw the FROM marker
-   if(  my_move->origin_selected &&
+   if(  !my_move->pass && 
+         my_move->origin_selected &&
         my_move->origin_type == empty) {
       
       // Figure out the height of the stack
@@ -164,7 +165,7 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    }
    
    // Draw the "Computer just moved" markers
-   if(my_move->computer_just_moved) {
+   if(!my_move->pass && my_move->computer_just_moved) {
       
       // Figure out the height of the stack
       vector<type> kind;

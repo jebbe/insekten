@@ -20,6 +20,7 @@ const int NO_PIECES = 8;
 const int MAIN_SIZE = 2000;
 
 typedef struct {
+   bool pass;
    bool computer_just_moved;
    bool origin_selected;
    type origin_type;

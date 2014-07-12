@@ -127,7 +127,6 @@ float ai::eval(bool evalcolor, bool print) {
             index[4] += - float(sign) * beetle_on_queen;
          }
       }
-      
    }
 
 #ifdef DEBUG
@@ -232,8 +231,8 @@ bool ai::generate_move(int max_depth) {
       stored_move->to == 0 &&
       stored_move->kind == empty &&
       stored_move->color == false) {
-         cerr << "Error: Cannot generate a move." << endl;
-         exit(-1);
+         // We cannot move, we have to pass
+         stored_move->pass = true;
    }
    has_stored_move = true;
 #ifdef DEBUG
@@ -314,6 +313,16 @@ int ai::ai_move_x_to() {
 int ai::ai_move_y_to() {
    if(has_stored_move) {
       return stored_move->to->yy;
+   } else {
+      cout << "Cannot examine a non-existent move!" << endl;
+      exit(-1);
+   }
+}
+
+
+bool ai::ai_move_is_pass() {
+   if(has_stored_move) {
+      return stored_move->pass;
    } else {
       cout << "Cannot examine a non-existent move!" << endl;
       exit(-1);
