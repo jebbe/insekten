@@ -8,6 +8,11 @@ ai::ai(ruleset rules) : game(rules) {
 
    ifstream file;
    file.open("eval.txt");
+   if(!file.is_open())  {
+      cerr << "Could not open the evaluation score file." << endl;
+      exit(-1);
+   }
+
    string junk;
    getline(file, junk);
    file >> weight[0] >> weight[1] >> junk;
@@ -54,6 +59,7 @@ float ai::eval(bool evalcolor, bool print) {
       vector<turn*> turns;
       
       // Find the queen and the pillbug
+
       board* my_queen = my_board;
       if(stock[int(color)][queen] == 0) {
          while(my_queen->ontop == 0 || 
@@ -64,7 +70,7 @@ float ai::eval(bool evalcolor, bool print) {
       board* my_pillbug = my_board;
       if((rules & p) == p && stock[int(color)][pillbug] == 0) {
          while(my_pillbug->ontop == 0 || 
-               my_pillbug->ontop->kind != queen || 
+               my_pillbug->ontop->kind != pillbug ||
                my_pillbug->ontop->color != color) my_pillbug = my_pillbug->next;
       }
 
