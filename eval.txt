@@ -1,7 +1,7 @@
 Movements | Movements degrading | Stock | Stock degrading            
  4                                  6                      Total       
  50          5                      1       100            Queen       
- 0.5         10                     1       100            Ant         
+ 0.25       10                     10         5            Ant         
  1           5                      1       100            Spider      
  1           5                      1       100            Cricket     
  1           5                      1       100            Beetle      
