@@ -61,9 +61,12 @@ protected:
 
    // List all the possible moves of all pieces
    void find_all_moves(bool color, vector<turn*> &turns);
+   void delete_moves(vector<turn*> &turns);
+
+   // Functions for the evaluation function that implement partial functionality
+   // of those above. Are trimmed for speed, not accuracy!
    //void find_all_placement_moves(bool color, vector<turn*> &turns);
    void find_all_movement_moves(bool color, vector<turn*> &turns);
-   void delete_moves(vector<turn*> &turns);
    
    // Carry out a turn or undo it. Will create a copy of the turn object, so
    // that it can be deleted after calling perform_move().

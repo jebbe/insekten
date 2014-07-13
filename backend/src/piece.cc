@@ -136,7 +136,7 @@ bool duplicate_compare_function (turn* ii, turn* jj) {
 
 void piece::remove_duplicate_moves(vector<turn*> &turns) {
    sort(turns.begin(), turns.end(), duplicate_compare_function);
-   turns.erase(std::unique(turns.begin(), turns.end()), turns.end());
+   turns.erase(unique(turns.begin(), turns.end()), turns.end());
    
 }
 
