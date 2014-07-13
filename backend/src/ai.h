@@ -60,7 +60,7 @@ private:
    //    score_no_queen
    // This should account for the fact that not placing the queen basically means that
    // we have 6 free spaces around the queen bee.
-   const float score_per_bee_freedom = 80;
+   const float score_per_bee_freedom = 60;
    const float score_no_queen = 100;
    
    // 1) This term is calculated as 

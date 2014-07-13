@@ -271,7 +271,7 @@ void piece::find_moves_mosquito(vector<turn*> &turns) {
                case mosquito:
                   break;
                default:
-                  cerr << "There's apiece on the board that has no valid type." << endl;
+                  cerr << "There's a piece on the board that has no valid type." << endl;
                   exit(-1);
             }
          }

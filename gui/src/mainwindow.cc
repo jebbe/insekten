@@ -272,14 +272,14 @@ void MainWindow::beginGame() {
       white_level = 1;
       black_level = 1;
    } else if(ui->medium->isChecked()) {
-      white_level = 2;
-      black_level = 2;
-   } else if(ui->hard->isChecked()) {
       white_level = 3;
       black_level = 3;
-   } else {
+   } else if(ui->hard->isChecked()) {
       white_level = 4;
       black_level = 4;
+   } else {
+      white_level = 5;
+      black_level = 5;
    }
       
    // Clear the new game dialog

@@ -206,7 +206,7 @@ bool ai::generate_move(int max_depth) {
    t_init=clock();
 #endif
    stored_move = new turn;
-   alphabeta(max_depth, 
+   float my_score = alphabeta(max_depth, 
              -std::numeric_limits<float>::max(), 
              std::numeric_limits<float>::max(),
              max_depth, stored_move);
@@ -219,10 +219,11 @@ bool ai::generate_move(int max_depth) {
    }
    has_stored_move = true;
 #ifdef DEBUG
-   cout << "Recursive search got involved " << ncalls << " times; "
-        << "total depth: " << max_depth << ".  ";
    t_final = clock() - t_init;
-   cout << "Time to create move: " 
+   cout << "Recursive search got involved " << ncalls << " times;  "
+        << "total depth: " << max_depth << ".  "
+        << "Max score: " << my_score << ";  "
+        << "Time to create move: " 
         << (double)t_final / ((double)CLOCKS_PER_SEC) << endl;
 #endif
 
