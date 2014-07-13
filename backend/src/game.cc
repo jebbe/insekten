@@ -142,9 +142,12 @@ void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
 
    if(half_turns > 0) {
       board* it = my_board;
-      while(it->ontop == 0) it = it->next; // Find a tile with a piece on top of it
+      while(it->ontop == 0) it = it->next; // Find any tile with a piece on top of it
       it->ontop->remove_duplicate_moves(turns);
    }
+   
+   // We don't check if we can pass because this routine is only relevant for
+   // the evaluation function.
    
 }
 
@@ -189,7 +192,7 @@ void game::find_all_moves(bool color, vector<turn*> &turns) {
 
    if(half_turns > 0) {
       board* it = my_board;
-      while(it->ontop == 0) it = it->next;
+      while(it->ontop == 0) it = it->next; // Find any tile with a piece on top of it
       it->ontop->remove_duplicate_moves(turns);
    }
    

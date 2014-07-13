@@ -118,18 +118,26 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved,
    
 }
 
+// void piece::remove_duplicate_moves(vector<turn*> &turns) {
+//    for(unsigned int ii=0; ii<turns.size(); ii++) {
+//       for(unsigned int jj=ii+1; jj<turns.size(); jj++) {
+//          if(  turns[ii]->from == turns[jj]->from &&
+//               turns[ii]->to == turns[jj]->to &&
+//               turns[ii]->kind == turns[jj]->kind ) {
+//             turns.erase(turns.begin()+jj); jj--;
+//          }
+//       }
+//    }
+// }
+
+bool duplicate_compare_function (turn* ii, turn* jj) { 
+   return (ii->from < jj->from); 
+}
+
 void piece::remove_duplicate_moves(vector<turn*> &turns) {
-   vector<unsigned int> duplicates;
-   at->set_not_visited();
-   for(unsigned int ii=0; ii<turns.size(); ii++) {
-      for(unsigned int jj=ii+1; jj<turns.size(); jj++) {
-         if(  turns[ii]->from == turns[jj]->from &&
-              turns[ii]->to == turns[jj]->to &&
-              turns[ii]->kind == turns[jj]->kind ) {
-            turns.erase(turns.begin()+jj); jj--;
-         }
-      }
-   }
+   sort(turns.begin(), turns.end(), duplicate_compare_function);
+   turns.erase(std::unique(turns.begin(), turns.end()), turns.end());
+   
 }
 
 void piece::find_moves_queen(vector<turn*> &turns) {

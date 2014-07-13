@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 #include "turn.h"
 #include "board.h"
@@ -28,6 +29,10 @@ enum type : unsigned char {
    NUM_TYPE=8, 
    empty=9
 }; 
+
+// We sort turns before removing duplicates, for which we need some kind of 
+// order. Can be anything really...
+bool duplicate_compare_function (turn* ii, turn* jj);
 
 class piece {
 
@@ -64,7 +69,7 @@ public:
    
    // This is an expensive function, try to avoid if possible!
    void remove_duplicate_moves(vector<turn*> &turns);
-   
+      
 };
 
 #endif 
