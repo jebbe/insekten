@@ -43,28 +43,81 @@ turn::turn(bool pass) {
    this->pass = true;
 }
 
-// TODO There's room for optimization here - instead of deleting and 
-// creating a piece we could just move pointers around.
 
+// This is supposed to be an optimized version of the commented routine below,
+// but it doesn't seem to achieve any performance improvement.
 void turn::perform() {
    if(pass) return;
    if(kind==empty) {
       // Move around
+      
+      //from->remove_piece();
+      
+      // Find the uppermost piece and call it "it"
       piece *it = from->ontop;
-      if(it == 0) {
-         cerr << "Illegal move, there's no piece on this tile." << endl;
-         exit(-1);
+      piece* it_prev = 0;
+      while(it->ontop != 0) {
+         it_prev = it;
+         it = it->ontop;
       }
-      while(it->ontop != 0) it = it->ontop;
-      type my_kind = it->kind;
-      bool my_color = it->color;
-      from->remove_piece();
-      new piece(my_kind, my_color, to);
+      
+      // Remove unnecessary pointer upwards and tiles that 
+      // have no occupied neighbor any more
+      if(it_prev != 0) {
+         it_prev->ontop = 0;
+      } else {
+         from->ontop = 0;
+         // Check for every neighbor if we can remove it
+         for(int ii=0; ii<6; ii++) {
+            bool removable = true;
+            if(from->nbr[ii]->ontop != 0) {
+               removable = false;
+            } else {
+               for(int jj=0; jj<6; jj++) {
+                  if(from->nbr[ii]->nbr[jj] != 0 &&
+                     from->nbr[ii]->nbr[jj]->ontop != 0) {
+                        removable = false;
+                  }
+               }
+            }
+            if(removable) {
+               from->nbr[ii]->connected = false;
+            }
+         }
+      }
+      
+      //new piece(my_kind, my_color, to);
+      
+      // Place the new piece
+      it->at = to;
+      it->ontop = 0;  
+      to->place_piece(it);
+      
    } else {
       // Place a new tile
       new piece(kind, color, to);
    }
 }
+
+// void turn::perform() {
+//    if(pass) return;
+//    if(kind==empty) {
+//       // Move around
+//       piece *it = from->ontop;
+//       if(it == 0) {
+//          cerr << "Illegal move, there's no piece on this tile." << endl;
+//          exit(-1);
+//       }
+//       while(it->ontop != 0) it = it->ontop;
+//       type my_kind = it->kind;
+//       bool my_color = it->color;
+//       from->remove_piece();
+//       new piece(my_kind, my_color, to);
+//    } else {
+//       // Place a new tile
+//       new piece(kind, color, to);
+//    }
+// }
 
 void turn::undo() {
    if(pass) return;

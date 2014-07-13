@@ -37,6 +37,70 @@ class ai : public game {
 
 private:
 
+   // --------------------------------------------------- //
+   // Defining the parameters for the evaluation function //
+   // --------------------------------------------------- //
+
+   // We evaluate the current board position based on these terms:
+   // -1) Winning/losing the game or playing draw.
+   //  0) The number of free tiles adjacent to the queen bee
+   //  1) The number of possible movements around the board, where each 
+   //     combination of origin/destiniation is considered one movement.
+   //  2) The number of possible placements of new pieces.
+   //  3) The number of pieces that have not been placed.
+   //  4) Extra terms
+   
+   // -1) Game ends
+   const float victory_score = 1.e4;
+   const float draw_score = -5.;
+
+   // 0) If the queen has been placed: 
+   //    score_per_bee_freedom*[free tiles around the queen bee]
+   // If the queen has not been placed:
+   //    score_no_queen
+   // This should account for the fact that not placing the queen basically means that
+   // we have 6 free spaces around the queen bee.
+   const float score_per_bee_freedom = 80;
+   const float score_no_queen = 100;
+   
+   // 1) This term is calculated as 
+   //       Movements * sum_over_pieces( (#moves * (Movements_piece + mvmnts_dgr) / (N + mvmnts_dgr) ) )
+   //    where N is the move counter. mvmnts_dgr gives you the opportunity to make 
+   //    flexibility less valuable later in the game.
+   // 
+   // 2) This term is calculated as 
+   //       Stock * sum_over_pieces( (#pieces * (Stock_piece + stock_dgr) / (#pieces + stock_dgr) ) )
+   //    Here, the number of pieces of this kind can be made less significant by
+   //    increasing stock_dgr, such that e.g. two ants in stock aren't twice as valuable
+   //    as one ant in stock.
+   //
+   // The higher stock_degrading, the less valuable additional unplaced pieces.
+   // The higher movements_degrading, the faster the movability of a piece becomes less 
+   // valuable during the game.
+   const float movements_weight = 4;
+   const float stock_weight = 6;
+   
+   const float score[8][4] = {
+   // Movements | Move dgr | Stock | Stock dgr            
+    { 50,         5,         1,       100 },      // Queen       
+    { 0.25,       10,        1,         5 },      // Ant         
+    { 1,          5,         1,       100 },      // Spider      
+    { 1,          5,         1,       100 },      // Cricket     
+    { 1,          5,         1,       100 },      // Beetle      
+    { 0.8,        5,         1,       100 },      // Ladybug     
+    { 0.5,        5,         1,       100 },      // Mosquito    
+    { 3,          5,         1,       100 }};     // Pillbug     
+
+   // 3) This term just adds up all the number of tiles we can place new pieces 
+   //    on and weighs them according to the placement_weight.
+   const float placement_weight = 2;
+
+   // 4) Extra points for:
+   //    - Beetles on top the pillbug
+   //    - Beetles on top of the queen
+   const float beetle_on_pillbug = 40;
+   const float beetle_on_queen = 100;
+  
 #ifdef DEBUG
    int ncalls;
 #endif
@@ -45,32 +109,6 @@ private:
    turn* stored_move;
    
    float eval(bool evalcolor, bool print);
-   
-   // score[kind][term]
-   // kind: What insect? Refers to the type enum.
-   // term: 0: Movements
-   //       1: Mvmnts dgr
-   //       2: Stock
-   //       3: Stock degrading
-   float score[8][4];
-   
-   // weight[term]
-   // term: 0: Movements
-   //       1: Stock
-   float weight[2];
-   
-   // How many points for not setting the queen, how many for every free
-   // tile around the bee?
-   float score_no_queen, score_per_bee_freedom;
-   
-   // How bad do we want to win / avoid a draw?
-   float victory_score, draw_score;
-   
-   // How important is being able to place new pieces?
-   float placement_weight;
-   
-   // Extra points
-   float beetle_on_pillbug, beetle_on_queen;
    
    // Minimax with alpha-beta-pruning
    float alphabeta(int depth, float alpha, float beta,

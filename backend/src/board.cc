@@ -156,7 +156,6 @@ void board::remove_piece() {
          }
          if(removable) {
             this->nbr[ii]->connected = false;
-            //delete this->nbr[ii];
          }
       }
    }

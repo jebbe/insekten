@@ -5,30 +5,6 @@
 
 ai::ai(ruleset rules) : game(rules) {
    has_stored_move = false;
-
-   ifstream file;
-   file.open("eval.txt");
-   if(!file.is_open())  {
-      cerr << "Could not open the evaluation score file." << endl;
-      exit(-1);
-   }
-
-   string junk;
-   getline(file, junk);
-   file >> weight[0] >> weight[1] >> junk;
-   for(int ii=0; ii<8; ii++) {
-      file >> score[ii][0] >> score[ii][1] >> score[ii][2]
-           >> score[ii][3] >> junk;
-   }
-   file >> score_per_bee_freedom >> junk;
-   file >> score_no_queen >> junk;
-   file >> placement_weight >> junk;
-   file >> victory_score >> junk;
-   file >> draw_score >> junk;
-   file >> beetle_on_pillbug >> junk;
-   file >> beetle_on_queen >> junk;
-   file.close();
-
 }
 
 
@@ -102,7 +78,7 @@ float ai::eval(bool evalcolor, bool print) {
          kind[int(turns[ii]->from->ontop->kind)]++;
       }
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
-         index[1] += float(sign) * weight[0] * float(kind[int(ii)])
+         index[1] += float(sign) * movements_weight * float(kind[int(ii)])
                           * (score[ii][0] + score[ii][1])
                           / (npieces + score[ii][1]);
       }
@@ -117,7 +93,7 @@ float ai::eval(bool evalcolor, bool print) {
       
       // Number of pieces in stock
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
-         index[3] += float(sign) * weight[1] * float(stock[color][int(ii)])
+         index[3] += float(sign) * stock_weight * float(stock[color][int(ii)])
                           * (score[ii][2] + score[ii][3])
                           / (float(stock[color][int(ii)]) + score[ii][3]);
       }
@@ -161,7 +137,7 @@ bool compare_function(move_sorter *ii, move_sorter *jj) {
 
 void ai::sort_moves(vector<turn*> &turns) {
    vector<move_sorter*> all_turns;
-   for(int ii=0; ii<turns.size(); ii++) {
+   for(int ii=0; ii<int(turns.size()); ii++) {
       move_sorter *my_move = new move_sorter;
       my_move->move = new turn(*turns[ii]);
       perform_move(turns[ii]);
@@ -172,7 +148,7 @@ void ai::sort_moves(vector<turn*> &turns) {
    delete_moves(turns);
    turns.clear();
    sort (all_turns.begin(), all_turns.end(), compare_function);
-   for(int ii=0; ii<all_turns.size(); ii++) {
+   for(int ii=0; ii<int(all_turns.size()); ii++) {
       turns.push_back(new turn(*all_turns[ii]->move));
       delete all_turns[ii];
    }

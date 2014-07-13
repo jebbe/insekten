@@ -7,10 +7,10 @@ piece::piece(type kind, bool color, board* place_at) {
    
    this->kind = kind;
    this->color = color;
-   at = place_at;
-   ontop = 0;
+   this->at = place_at;
+   this->ontop = 0;
   
-   at->place_piece(this);
+   this->at->place_piece(this);
    
 }
 
