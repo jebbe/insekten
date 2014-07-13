@@ -93,7 +93,7 @@ private:
 
    // 3) This term just adds up all the number of tiles we can place new pieces 
    //    on and weighs them according to the placement_weight.
-   const float placement_weight = 2;
+   const float placement_weight = 10;
 
    // 4) Extra points for:
    //    - Beetles on top the pillbug

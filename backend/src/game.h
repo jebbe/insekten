@@ -42,9 +42,6 @@ private:
    // print the content of a single tile
    void print_tile(board* it);
    
-   // Where can I place new pieces?
-   void find_placeable_tiles(bool color, vector<board*> &tiles);
-   
    // Help figuring out whether somebody won
    bool queen_surrounded(bool color);
    //bool no_legal_move(bool color);
@@ -55,13 +52,16 @@ protected:
 
    board* my_board;
    ruleset rules;
+   
+   // Where can I place new pieces?
+   void find_placeable_tiles(bool color, vector<board*> &tiles);
 
    // Keep track of the not-yet-placed pieces
    int stock[2][NUM_TYPE];
 
    // List all the possible moves of all pieces
    void find_all_moves(bool color, vector<turn*> &turns);
-   void find_all_placement_moves(bool color, vector<turn*> &turns);
+   //void find_all_placement_moves(bool color, vector<turn*> &turns);
    void find_all_movement_moves(bool color, vector<turn*> &turns);
    void delete_moves(vector<turn*> &turns);
    

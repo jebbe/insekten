@@ -86,8 +86,9 @@ float ai::eval(bool evalcolor, bool print) {
       turns.clear();
       
       // Number of placements
-      find_all_placement_moves(color, turns);
-      index[2] += float(sign) * placement_weight * float(turns.size());
+      vector<board*> tiles;
+      find_placeable_tiles(color, tiles);
+      index[2] += float(sign) * placement_weight * float(tiles.size());
       delete_moves(turns);
       turns.clear();
       

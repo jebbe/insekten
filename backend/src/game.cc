@@ -87,40 +87,40 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
    } while(it != started);
 }
 
-void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
-
-   // Where can I place pieces?
-   vector<board*> tiles;
-   find_placeable_tiles(color, tiles);
-
-   // Do we have to place the queen bee?
-   if(half_turns > 5 && stock[int(color)][queen] == 1) {
-      for(unsigned int ii=0; ii<tiles.size(); ii++) {
-         turns.push_back(new turn(queen, color, tiles[ii]));
-      }
-      return;
-   }
-
-   // Find all possible placements
-   for(int ii=0; ii<int(tiles.size()); ii++) {
-      for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
-         if(stock[int(color)][int(kind)] > 0) {
-            if(((rules & nqf) != nqf) || // Take care of the "can't place queen first" rule
-                 half_turns > 1 || 
-                 kind != queen) {
-               turns.push_back(new turn((type)kind, color, tiles[ii]));
-            }
-         }
-      }
-   }
-      
-   if(half_turns > 0) {
-      board* it = my_board;
-      while(it->ontop == 0) it = it->next;
-      it->ontop->remove_duplicate_moves(turns);
-   }
-   
-}
+// void game::find_all_placement_moves(bool color, vector<turn*> &turns) {
+// 
+//    // Where can I place pieces?
+//    vector<board*> tiles;
+//    find_placeable_tiles(color, tiles);
+// 
+//    // Do we have to place the queen bee?
+//    if(half_turns > 5 && stock[int(color)][queen] == 1) {
+//       for(unsigned int ii=0; ii<tiles.size(); ii++) {
+//          turns.push_back(new turn(queen, color, tiles[ii]));
+//       }
+//       return;
+//    }
+// 
+//    // Find all possible placements
+//    for(int ii=0; ii<int(tiles.size()); ii++) {
+//       for(unsigned char kind=0; kind<NUM_TYPE; kind++) {
+//          if(stock[int(color)][int(kind)] > 0) {
+//             if(((rules & nqf) != nqf) || // Take care of the "can't place queen first" rule
+//                  half_turns > 1 || 
+//                  kind != queen) {
+//                turns.push_back(new turn((type)kind, color, tiles[ii]));
+//             }
+//          }
+//       }
+//    }
+//       
+//    if(half_turns > 0) {
+//       board* it = my_board;
+//       while(it->ontop == 0) it = it->next;
+//       it->ontop->remove_duplicate_moves(turns);
+//    }
+//    
+// }
 
 
 void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
