@@ -15,6 +15,10 @@ ai::~ai() {
 
 float ai::eval(bool evalcolor, bool print) {
    
+#ifdef DEBUG
+   ncalls++;
+#endif
+
    bool draw = is_draw();
    bool blackw = black_wins();
    bool whitew = white_wins();
@@ -116,11 +120,11 @@ float ai::eval(bool evalcolor, bool print) {
    if(print) {
       cout << "Total score: " << index[0] + index[1] + index[2] 
                                + index[3] + index[4]
-           << " | bee free neighbors: " << index[0] 
-           << " | # moves around: " << index[1] 
-           << " | # placements: " << index[2] 
-           << " | # reserve: " << index[3]
-           << " | # extra: " << index[4] << endl;
+           << ";  bee free neighbors: " << index[0] 
+           << ";  moves around: " << index[1] 
+           << ";  placements: " << index[2] 
+           << ";  reserve: " << index[3]
+           << ";  extra: " << index[4] << endl;
    }
 #endif
    
@@ -159,27 +163,28 @@ void ai::sort_moves(vector<turn*> &turns) {
 float ai::alphabeta(int depth, float alpha, float beta,
                     int initial_depth, turn* &best_move) {
 
-#ifdef DEBUG
-   ncalls++;
-#endif
-
    if (depth == 0 || game_over()) {
       return eval(whose_turn(), false);
    }
-
+   
    float maxValue = alpha;
    vector<turn*> turns;
    find_all_moves(whose_turn(), turns);
-   if(turns.size() == 0) {
-      return eval(whose_turn(), false);
-   }
    
    if(depth != 1) sort_moves(turns);
-
+   
    for(int ii=0; ii<int(turns.size()); ii++) {
       perform_move(turns[ii]);
-      float value = -alphabeta(depth-1, -beta, -maxValue, 
-                               initial_depth, best_move);
+
+      // Selective deepening
+      float value;
+      if(   (initial_depth == 6 && depth == 4 && ii>int(turns.size())*2/3) ||
+            (initial_depth == 6 && depth == 5 && ii>int(turns.size())/3)) {
+         value = -eval(whose_turn(), false);
+      } else {
+         value = -alphabeta(depth-1, -beta, -maxValue, 
+                            initial_depth, best_move);
+      }
       undo_move();
       
       // Do we have a new best move?
@@ -220,7 +225,7 @@ bool ai::generate_move(int max_depth) {
    has_stored_move = true;
 #ifdef DEBUG
    t_final = clock() - t_init;
-   cout << "Recursive search got involved " << ncalls << " times;  "
+   cout << "Eval got involved " << ncalls << " times;  "
         << "total depth: " << max_depth << ".  "
         << "Max score: " << my_score << ";  "
         << "Time to create move: " 

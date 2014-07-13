@@ -84,11 +84,11 @@ private:
    // Movements | Move dgr | Stock | Stock dgr            
     { 50,         5,         1,       100 },      // Queen       
     { 0.25,       10,        1,         5 },      // Ant         
-    { 1,          5,         1,       100 },      // Spider      
-    { 1,          5,         1,       100 },      // Cricket     
-    { 1,          5,         1,       100 },      // Beetle      
+    { 3,          5,         1,       100 },      // Spider      
+    { 3,          5,         1,       100 },      // Cricket     
+    { 2,          5,         1,       100 },      // Beetle      
     { 0.8,        5,         1,       100 },      // Ladybug     
-    { 0.5,        5,         1,       100 },      // Mosquito    
+    { 1,          5,         1,       100 },      // Mosquito    
     { 3,          5,         1,       100 }};     // Pillbug     
 
    // 3) This term just adds up all the number of tiles we can place new pieces 
@@ -100,7 +100,14 @@ private:
    //    - Beetles on top of the queen
    const float beetle_on_pillbug = 40;
    const float beetle_on_queen = 100;
-  
+   
+   // TODO: 
+   // - Quens far enough apart
+   // - Don't place ants first
+   // (- Make moavble own pieces ok next to own queen) - maybe improve search depth for those?
+   // - Pillbug extra score for next to own queen
+   // - iterative search deepening; maybe only look at good moves starting from a certain depth
+   
 #ifdef DEBUG
    int ncalls;
 #endif
