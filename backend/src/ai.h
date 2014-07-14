@@ -51,45 +51,41 @@ private:
    //  4) Extra terms
    
    // -1) Game ends
-   const float victory_score = 1.e4;
-   const float draw_score = -5.;
+   const float victory_score = 1.e12;
+   const float draw_score = -30.;
 
    // 0) If the queen has been placed: 
    //    score_per_bee_freedom*[free tiles around the queen bee]
-   // If the queen has not been placed:
-   //    score_no_queen
-   // This should account for the fact that not placing the queen basically means that
-   // we have 6 free spaces around the queen bee.
-   const float score_per_bee_freedom = 60;
-   const float score_no_queen = 100;
+   const float score_per_bee_freedom = 60.;
    
    // 1) This term is calculated as 
-   //       Movements * sum_over_pieces( (#moves * (Movements_piece + mvmnts_dgr) / (N + mvmnts_dgr) ) )
+   //       Movements * sum_over_pieces( (#moves * Movements_piece * mvmnts_dgr / (N + mvmnts_dgr) ) )
    //    where N is the move counter. mvmnts_dgr gives you the opportunity to make 
    //    flexibility less valuable later in the game.
+   //    The higher movements_degrading, the slower the movability of a piece 
+   //    becomes less valuable during the game.
    // 
    // 2) This term is calculated as 
-   //       Stock * sum_over_pieces( (#pieces * (Stock_piece + stock_dgr) / (#pieces + stock_dgr) ) )
+   //       Stock * sum_over_pieces( (#pieces * Stock_piece * stock_dgr / (#pieces + stock_dgr) ) )
    //    Here, the number of pieces of this kind can be made less significant by
    //    increasing stock_dgr, such that e.g. two ants in stock aren't twice as valuable
    //    as one ant in stock.
+   //    The higher stock_degrading, the more valuable additional unplaced pieces.
    //
-   // The higher stock_degrading, the less valuable additional unplaced pieces.
-   // The higher movements_degrading, the faster the movability of a piece becomes less 
-   // valuable during the game.
+   //    Warning: Dgr values smaller than one can screw up the evaluation function.
    const float movements_weight = 4;
-   const float stock_weight = 6;
+   const float stock_weight = 40;
    
    const float score[8][4] = {
-   // Movements | Move dgr | Stock | Stock dgr            
-    { 50,         5,         1,       100 },      // Queen       
-    { 0.25,       10,        1,         5 },      // Ant         
-    { 3,          5,         1,       100 },      // Spider      
-    { 3,          5,         1,       100 },      // Cricket     
-    { 2,          5,         1,       100 },      // Beetle      
-    { 0.8,        5,         1,       100 },      // Ladybug     
-    { 1,          5,         1,       100 },      // Mosquito    
-    { 3,          5,         1,       100 }};     // Pillbug     
+   // Movements_piece | Move dgr | Stock_piece | Stock dgr            
+    { 10,               10000,      1,            1 },      // Queen       
+    { 1,                 5,         1,            1.5 },    // Ant         
+    { 3,                10,         1,            1 },      // Spider      
+    { 3,                10,         1,            1 },      // Cricket     
+    { 2,                10,         1,            1 },      // Beetle      
+    { 1,                10,         1,            1 },      // Ladybug     
+    { 1,                10,         1,            1 },      // Mosquito    
+    { 3,                10,         1,            1 }};     // Pillbug     
 
    // 3) This term just adds up all the number of tiles we can place new pieces 
    //    on and weighs them according to the placement_weight.
@@ -101,12 +97,14 @@ private:
    const float beetle_on_pillbug = 40;
    const float beetle_on_queen = 100;
    
+   // Enforcing certain behaviour outside the evaluation function
+   // draw_score comes into play here as well
+   const float ant_first = -50.;
+   const float queen_first = -100.;
+
    // TODO: 
-   // - Quens far enough apart
-   // - Don't place ants first
    // (- Make moavble own pieces ok next to own queen) - maybe improve search depth for those?
    // - Pillbug extra score for next to own queen
-   // - iterative search deepening; maybe only look at good moves starting from a certain depth
    
 #ifdef DEBUG
    int ncalls;

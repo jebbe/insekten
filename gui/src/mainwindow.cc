@@ -209,7 +209,34 @@ void MainWindow::undoMove() {
 void MainWindow::passMove() {
    if(!game_active) return;
    game->pass();
+   if(!game->game_over()) {
+      if(game->whose_turn() && !black_human) {
+         computerMove(true);
+      } else if(!game->whose_turn() && !white_human) {
+         computerMove(false);
+      }
+   }
    resetClicked();
+
+   // Are we done?
+   if(game->game_over()) {
+      
+      if(game->white_wins()) {
+         QMessageBox::about(this, tr("Game over"),
+                      tr("White wins!" ));
+      } else if(game->black_wins()) {
+         QMessageBox::about(this, tr("Game over"),
+                      tr("Black wins!" ));
+      } else if(game->is_draw()) {
+         QMessageBox::about(this, tr("Game over"),
+                      tr("Draw." ));
+      } else {
+         QMessageBox::about(this, tr("Game over"),
+                      tr("Game over, but nobody wins, and no draw. Probably a bug." ));
+      }
+      game_active = false;
+   }
+   
 }
 
 /////////////////////////
@@ -269,11 +296,11 @@ void MainWindow::beginGame() {
    black_human = ui->black_human->isChecked();
    
    if(ui->easy->isChecked()) {
-      white_level = 1;
-      black_level = 1;
-   } else if(ui->medium->isChecked()) {
       white_level = 2;
       black_level = 2;
+   } else if(ui->medium->isChecked()) {
+      white_level = 3;
+      black_level = 3;
    } else if(ui->hard->isChecked()) {
       white_level = 4;
       black_level = 4;

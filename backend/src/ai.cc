@@ -18,7 +18,8 @@ float ai::eval(bool evalcolor, bool print) {
 #ifdef DEBUG
    ncalls++;
 #endif
-
+   
+   // Return immediately if the game is over
    bool draw = is_draw();
    bool blackw = black_wins();
    bool whitew = white_wins();
@@ -28,8 +29,9 @@ float ai::eval(bool evalcolor, bool print) {
    if(blackw && !evalcolor) return -victory_score;
    if(whitew && evalcolor) return -victory_score;
    if(whitew && !evalcolor) return victory_score;
-   
+
    float index[5] = {0., 0., 0., 0., 0.};
+   
    for(int sign=-1; sign<=1; sign+=2) {
       
       // We evaluate for both players and add up their score with different
@@ -71,9 +73,9 @@ float ai::eval(bool evalcolor, bool print) {
                index[0] += float(sign) * score_per_bee_freedom;
             }
          }
-      } else {
-         index[0] += float(sign) * score_no_queen;
-      }
+      }// else {
+      //   index[0] += float(sign) * score_no_queen;
+      //}
       
       // Number of moves around the board
       find_all_movement_moves(color, turns);
@@ -83,7 +85,7 @@ float ai::eval(bool evalcolor, bool print) {
       }
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
          index[1] += float(sign) * movements_weight * float(kind[int(ii)])
-                          * (score[ii][0] + score[ii][1])
+                          * (score[ii][0] * score[ii][1])
                           / (npieces + score[ii][1]);
       }
       delete_moves(turns);
@@ -99,7 +101,7 @@ float ai::eval(bool evalcolor, bool print) {
       // Number of pieces in stock
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
          index[3] += float(sign) * stock_weight * float(stock[color][int(ii)])
-                          * (score[ii][2] + score[ii][3])
+                          * (score[ii][2] * score[ii][3])
                           / (float(stock[color][int(ii)]) + score[ii][3]);
       }
       
@@ -162,7 +164,7 @@ void ai::sort_moves(vector<turn*> &turns) {
 
 float ai::alphabeta(int depth, float alpha, float beta,
                     int initial_depth, turn* &best_move) {
-
+   
    if (depth == 0 || game_over()) {
       return eval(whose_turn(), false);
    }
@@ -187,6 +189,39 @@ float ai::alphabeta(int depth, float alpha, float beta,
       }
       undo_move();
       
+      // Stuff we manually want or don't want the AI to do: Add or subtract score
+      // the highest level. This messes with the alphabeta search, so use with 
+      // caution!
+      if(depth == initial_depth) {
+         
+         // Don't bring the two bees too close to avoid draw
+         perform_move(turns[ii]);
+         board* it = my_board;
+         board* started = my_board;
+         do {
+            it = it->next;
+            int nbees = 0;
+            for(int ii=0; ii<6; ii++) {
+               if(it->nbr[ii] != 0 &&
+                  it->nbr[ii]->ontop != 0 && 
+                  it->nbr[ii]->ontop->kind == queen) nbees++;
+            }
+            if(nbees == 2)
+               value += draw_score;
+         } while(it != started);
+         undo_move();
+         
+         // Don't start with an ant
+         if(   (turn_count() == 0 || turn_count() == 1) &&
+               turns[ii]->kind == ant)
+            value += ant_first;
+
+         // Don't start with the queen
+         if(   (turn_count() == 0 || turn_count() == 1) &&
+               turns[ii]->kind == queen)
+            value += queen_first;
+      }
+
       // Do we have a new best move?
       if(value > maxValue) {
          maxValue = value;
@@ -199,6 +234,7 @@ float ai::alphabeta(int depth, float alpha, float beta,
       }
    }
    delete_moves(turns);
+   
    return maxValue;
 }
 
