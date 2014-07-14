@@ -60,8 +60,9 @@ private:
    
    // 1) This term is calculated as 
    //       Movements * sum_over_pieces( (#moves * Movements_piece * mvmnts_dgr / (N + mvmnts_dgr) ) )
-   //    where N is the move counter. mvmnts_dgr gives you the opportunity to make 
-   //    flexibility less valuable later in the game.
+   //    where N is the number of pieces in the game. mvmnts_dgr gives you the 
+   //    opportunity to make flexibility less valuable later in the game, which 
+   //    should account for the larger size of the hive.
    //    The higher movements_degrading, the slower the movability of a piece 
    //    becomes less valuable during the game.
    // 
@@ -79,17 +80,17 @@ private:
    const float score[8][4] = {
    // Movements_piece | Move dgr | Stock_piece | Stock dgr            
     { 10,               10000,      1,            1 },      // Queen       
-    { 1,                 5,         1,            1.5 },    // Ant         
-    { 3,                10,         1,            1 },      // Spider      
-    { 3,                10,         1,            1 },      // Cricket     
-    { 2,                10,         1,            1 },      // Beetle      
-    { 1,                10,         1,            1 },      // Ladybug     
-    { 1,                10,         1,            1 },      // Mosquito    
-    { 3,                10,         1,            1 }};     // Pillbug     
+    { 1,                 2,         1,            1.5 },    // Ant         
+    { 3,                 3,         1,            1 },      // Spider      
+    { 3,                 3,         1,            1 },      // Cricket     
+    { 2,                 3,         1,            1 },      // Beetle      
+    { 1,                 3,         1,            1 },      // Ladybug     
+    { 1,                 3,         1,            1 },      // Mosquito    
+    { 3,                 3,         1,            1 }};     // Pillbug     
 
    // 3) This term just adds up all the number of tiles we can place new pieces 
    //    on and weighs them according to the placement_weight.
-   const float placement_weight = 10;
+   const float placement_weight = 5;
 
    // 4) Extra points for:
    //    - Beetles on top the pillbug
@@ -103,6 +104,7 @@ private:
    const float queen_first = -100.;
 
    // TODO: 
+   // Make low-value pieces next to queen more valuable than high-value pieces
    // (- Make moavble own pieces ok next to own queen) - maybe improve search depth for those?
    // - Pillbug extra score for next to own queen
    

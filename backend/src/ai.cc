@@ -180,8 +180,12 @@ float ai::alphabeta(int depth, float alpha, float beta,
 
       // Selective deepening
       float value;
-      if(   (initial_depth == 6 && depth == 4 && ii>int(turns.size())*2/3) ||
-            (initial_depth == 6 && depth == 5 && ii>int(turns.size())/3)) {
+      if(   (initial_depth == 5 && depth == 3 && ii>int(turns.size())*2/3) ||
+            (initial_depth == 5 && depth == 4 && ii>int(turns.size())/3)) {
+         // Expert
+         value = -eval(whose_turn(), false);
+      } else if(initial_depth == 4 && depth == 3 && ii>int(turns.size())*2/3) {
+         // Hard
          value = -eval(whose_turn(), false);
       } else {
          value = -alphabeta(depth-1, -beta, -maxValue, 

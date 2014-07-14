@@ -305,8 +305,8 @@ void MainWindow::beginGame() {
       white_level = 4;
       black_level = 4;
    } else {
-      white_level = 6;
-      black_level = 6;
+      white_level = 5;
+      black_level = 5;
    }
       
    // Clear the new game dialog
