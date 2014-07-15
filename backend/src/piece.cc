@@ -118,6 +118,96 @@ void piece::list_moves(vector<turn*> &turns, board* just_moved,
    
 }
 
+
+int piece::count_moves(board* just_moved, bool whoseturn) {
+   
+   // Check if we are blocked by a dungbeetle
+   if(this->ontop != 0) return 0;
+   
+   if(at == just_moved) return 0;
+   
+   // Check if we can move without violating the one-hive-rule. The pillbug
+   // has to check this move itself, since it can move other pieces around.
+   if(!at->one_hive()) return 0;
+   
+   int n_moves = 0;
+   
+   // Find possible moves for our specific piece
+   if(whoseturn == color) {
+      switch(kind) {
+         case queen:
+            n_moves += count_moves_queen();
+            break;
+         case ant:
+            n_moves += count_moves_ant();
+            break;
+         case spider:
+            n_moves += count_moves_spider();
+            break;
+         case cricket:
+            n_moves += count_moves_cricket();
+            break;
+         case beetle:
+            n_moves += count_moves_beetle();
+            break;
+         case ladybug:
+            n_moves += count_moves_ladybug();
+            break;
+         case mosquito:
+            n_moves += count_moves_mosquito();
+            break;
+         case pillbug:
+            n_moves += count_moves_pillbug();
+            break;
+         default:
+            cout << "Cannot count the moves for an undefined piece." << endl;
+            exit(-1);
+      }
+   }
+
+   // Account for the possibility that the pillbug moves us around
+   if(at->ontop == this) {
+      for(int ii=0; ii<6; ii++) {
+         
+         bool nbr_is_pillbug = false;
+         // Is my neighbor a pillbug?
+         if(at->nbr[ii] != 0 &&
+            at->nbr[ii]->ontop != 0 && 
+            at->nbr[ii]->ontop->kind == pillbug && 
+            at->nbr[ii]->ontop->color == whoseturn) nbr_is_pillbug = true;
+         // Is my neighbor a mosquito that inherits pillbug behavior?
+         if(   at->nbr[ii] != 0 &&
+               at->nbr[ii]->ontop != 0 && 
+               at->nbr[ii]->ontop->kind == mosquito && 
+               at->nbr[ii]->ontop->color == whoseturn) {
+            for(int kk=0; kk<6; kk++) {
+               if(   at->nbr[ii]->nbr[kk] != 0 &&
+                     at->nbr[ii]->nbr[kk]->ontop != 0 && 
+                     at->nbr[ii]->nbr[kk]->ontop->kind == pillbug) {
+                  nbr_is_pillbug = true;
+               }
+            }
+         }
+
+         if(nbr_is_pillbug) {
+            // Check the neighbors of the pillbug. Pillbug is at at->nbr[ii]
+            for(int jj=0; jj<6; jj++) {
+               if(ii != (jj+3)%6) {
+                  if(at->nbr[ii]->nbr[jj]->ontop == 0) {
+                     if(  !(at->impass_high_lvl(ii, true)) &&
+                          !(at->nbr[ii]->impass_high_lvl(jj, false))) {
+                        n_moves++;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   return n_moves;
+}
+
+
 // void piece::remove_duplicate_moves(vector<turn*> &turns) {
 //    for(unsigned int ii=0; ii<turns.size(); ii++) {
 //       for(unsigned int jj=ii+1; jj<turns.size(); jj++) {
@@ -139,6 +229,10 @@ void piece::remove_duplicate_moves(vector<turn*> &turns) {
    turns.erase(unique(turns.begin(), turns.end()), turns.end());
    
 }
+
+// ============
+//  Find moves
+// ============
 
 void piece::find_moves_queen(vector<turn*> &turns) {
    for(int ii=0; ii<6; ii++) {
@@ -282,6 +376,157 @@ void piece::find_moves_mosquito(vector<turn*> &turns) {
 void piece::find_moves_pillbug(vector<turn*> &turns) {
    find_moves_queen(turns);
 }
+
+// ============
+// Count moves
+// ============
+
+int piece::count_moves_queen() {
+   int n_moves = 0;
+   for(int ii=0; ii<6; ii++) {
+      if(at->bee_can_move_to(ii)) {
+         n_moves++;
+      }
+   }
+   return n_moves;
+}
+
+int piece::count_moves_ant() {
+   at->set_not_visited();
+   at->ontop = 0;
+   int n_moves = 0;
+   at->ant_graph_search(at, n_moves);
+   at->ontop = this;
+   return n_moves;
+}
+
+int piece::count_moves_spider() {
+   int n_moves = 0;
+   at->ontop = 0;
+   for(int ii=0; ii<6; ii++) {
+      if(at->bee_can_move_to(ii)) {
+         for(int jj=0; jj<6; jj++) {
+            if(jj != (ii+3)%6 && // This would move me back to where I came from
+                  at->nbr[ii]->bee_can_move_to(jj)) {
+               for(int kk=0; kk<6; kk++) {
+                  if(kk != (jj+3)%6 &&
+                        at->nbr[ii]->nbr[jj]->bee_can_move_to(kk)) {
+                     n_moves++;
+                  }
+               }
+            }
+         }
+      }
+   }
+   at->ontop = this;
+   return n_moves;
+}
+
+int piece::count_moves_cricket() {
+   int n_moves = 0;
+   for(int ii=0; ii<6; ii++) {
+      board* it;
+      if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true))) {
+         it = at->nbr[ii];
+         bool new_move = true;
+         while(it->ontop != 0) {
+            if(it->impass_high_lvl(ii, false)) new_move = false;
+            it = it->nbr[ii];
+         }
+         if(new_move) n_moves++;
+      }
+   }
+   return n_moves;
+}
+
+int piece::count_moves_beetle() {
+   int n_moves = 0;
+   if(at->ontop == this) {
+      // We're not on top of somebody else
+      n_moves += count_moves_queen();
+      for(int ii=0; ii<6; ii++) {
+         if(at->nbr[ii]->ontop != 0 && !(at->impass_high_lvl(ii, true))) {
+            n_moves++;
+         }
+      }
+   } else {
+      // We're on top of somebody else
+      for(int ii=0; ii<6; ii++) {
+         if(!(at->impass_high_lvl(ii, true))) {
+            n_moves++;
+         }
+      }
+   }
+   return n_moves;
+}
+
+int piece::count_moves_ladybug() {
+   int n_moves = 0;
+   at->ontop = 0;
+   at->set_not_visited();
+   at->visited = true;
+   for(int ii=0; ii<6; ii++) {
+      if(at->nbr[ii]->ontop != 0 &&  // One move on top of someone else
+       !(at->impass_high_lvl(ii, true))) {
+         for(int jj=0; jj<6; jj++) {
+            if(at->nbr[ii]->nbr[jj]->ontop != 0 && // Another one
+             !(at->nbr[ii]->impass_high_lvl(jj, false))) {
+               for(int kk=0; kk<6; kk++) {
+                  if(!at->nbr[ii]->nbr[jj]->nbr[kk]->visited && // Prevent duplicate moves
+                      at->nbr[ii]->nbr[jj]->nbr[kk]->ontop == 0 &&
+                    !(at->nbr[ii]->nbr[jj]->impass_high_lvl(kk, false))) {
+                     at->nbr[ii]->nbr[jj]->nbr[kk]->visited = true;
+                     n_moves++;
+                  }
+               }
+            }
+         }
+      }
+   }
+   at->ontop = this;
+   return n_moves;
+}
+
+int piece::count_moves_mosquito() {
+   
+   // Am I on top of somebody and thus a beetle?
+   if(at->ontop != this) {
+      return count_moves_beetle();
+   } else {
+      for(int ii=0; ii<6; ii++) {
+         piece* it = at->nbr[ii]->ontop;
+         if(it != 0) {
+            while(it->ontop != 0) it = it->ontop;
+            switch(it->kind) {
+               case queen:
+                  return count_moves_queen();
+               case ant:
+                  return count_moves_ant();
+               case spider:
+                  return count_moves_spider();
+               case cricket:
+                  return count_moves_cricket();
+               case beetle:
+                  return count_moves_beetle();
+               case ladybug:
+                  return count_moves_ladybug();
+               case pillbug:
+                  return count_moves_pillbug();
+               case mosquito:
+                  return 0;
+               default:
+                  cerr << "There's a piece on the board that has no valid type." << endl;
+                  exit(-1);
+            }
+         }
+      }
+   }
+}
+
+int piece::count_moves_pillbug() {
+   return count_moves_queen();
+}
+
 
 #endif 
  

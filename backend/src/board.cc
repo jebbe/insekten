@@ -256,6 +256,18 @@ void board::ant_graph_search(vector<turn*> &turns, board* origin) {
    }
 }
 
+void board::ant_graph_search(board* origin, int &n_moves) {
+   if(!visited) {
+      if(this != origin) n_moves++;
+      visited = true;
+      for(int ii=0; ii<6; ii++) {
+         if(bee_can_move_to(ii)) {
+            nbr[ii]->ant_graph_search(origin, n_moves);
+         }
+      }
+   }
+}
+
 bool board::path_search(board* to) {
    if(this == to) return true;
    visited = true;

@@ -20,9 +20,13 @@ float ai::eval(bool evalcolor, bool print) {
 #endif
    
    // Return immediately if the game is over
-   bool draw = is_draw();
-   bool blackw = black_wins();
-   bool whitew = white_wins();
+   
+   bool white_queen_surrounded = queen_surrounded(false);
+   bool black_queen_surrounded = queen_surrounded(true);
+   
+   bool draw = black_queen_surrounded && white_queen_surrounded;
+   bool blackw = black_queen_surrounded && !white_queen_surrounded;
+   bool whitew = white_queen_surrounded && !black_queen_surrounded;
    
    if(draw) return draw_score;
    if(blackw && evalcolor) return victory_score;
@@ -38,8 +42,6 @@ float ai::eval(bool evalcolor, bool print) {
       // signs.
       bool color = ((sign == -1) ? !evalcolor : evalcolor);
      
-      vector<turn*> turns;
-      
       // Find the queen and the pillbug
 
       board* my_queen = my_board;
@@ -78,21 +80,17 @@ float ai::eval(bool evalcolor, bool print) {
       //}
       
       // Number of moves around the board
-      find_all_movement_moves(color, turns);
       int kind[NUM_TYPE] = {0,0,0,0,0,0,0,0};
-      for(int ii=0; ii<int(turns.size()); ii++) {
-         kind[int(turns[ii]->from->ontop->kind)]++;
-      }
+      count_movement_moves(color, kind);
       for(unsigned char ii=0; ii<NUM_TYPE; ii++) {
          index[1] += float(sign) * movements_weight * float(kind[int(ii)])
                           * (score[ii][0] * score[ii][1])
                           / (npieces + score[ii][1]);
       }
-      delete_moves(turns);
-      turns.clear();
       
       // Number of placements
       vector<board*> tiles;
+      vector<turn*> turns;
       find_placeable_tiles(color, tiles);
       index[2] += float(sign) * placement_weight * float(tiles.size());
       delete_moves(turns);

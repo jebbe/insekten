@@ -105,7 +105,7 @@ private:
 
    // TODO: 
    // Make low-value pieces next to queen more valuable than high-value pieces
-   // (- Make moavble own pieces ok next to own queen) - maybe improve search depth for those?
+   // (- Make movable own pieces ok next to own queen) - maybe improve search depth for those?
    // - Pillbug extra score for next to own queen
    
 #ifdef DEBUG
@@ -122,7 +122,7 @@ private:
                    int initial_depth, turn* &best_move);
    
    // To increase the chance of cutoffs, we presort the moves by evaluating
-   // them with the evaluation function. As of yet, this is just a bubble sort.
+   // them with the evaluation function.
    void sort_moves(vector<turn*> &turns);
    
 public:

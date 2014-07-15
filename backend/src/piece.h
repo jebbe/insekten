@@ -47,6 +47,15 @@ private:
    void find_moves_mosquito(vector<turn*> &turns);
    void find_moves_pillbug(vector<turn*> &turns);
 
+   int count_moves_queen();
+   int count_moves_ant();
+   int count_moves_spider();
+   int count_moves_cricket();
+   int count_moves_beetle();
+   int count_moves_ladybug();
+   int count_moves_mosquito();
+   int count_moves_pillbug();
+
 public:
    
    // I am associated with a player and I have an image printed on me.
@@ -67,6 +76,9 @@ public:
                    bool whoseturn, bool rm_duplicates, 
                    bool check_just_moved = true);
    
+   // Same as above but just dount, don't actually list the moves
+   int count_moves(board* just_moved, bool whoseturn);
+
    // This is an expensive function, try to avoid if possible!
    void remove_duplicate_moves(vector<turn*> &turns);
       

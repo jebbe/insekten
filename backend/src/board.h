@@ -82,6 +82,9 @@ public:
    // Find all the tiles an ant can move to
    void ant_graph_search(vector<turn*> &turns, board* origin);
 
+   // Count all the tiles an ant can move to
+   void ant_graph_search(board* origin, int &n_moves);
+
 };
 
 #endif 

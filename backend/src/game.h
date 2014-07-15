@@ -42,13 +42,13 @@ private:
    // print the content of a single tile
    void print_tile(board* it);
    
-   // Help figuring out whether somebody won
-   bool queen_surrounded(bool color);
-   //bool no_legal_move(bool color);
-
 // These routines use the internal data structures and are meant to be used by
 // the AI
 protected:
+
+   // Help figuring out whether somebody won
+   bool queen_surrounded(bool color);
+   //bool no_legal_move(bool color);
 
    board* my_board;
    ruleset rules;
@@ -63,10 +63,11 @@ protected:
    void find_all_moves(bool color, vector<turn*> &turns);
    void delete_moves(vector<turn*> &turns);
 
-   // Functions for the evaluation function that implement partial functionality
-   // of those above. Are trimmed for speed, not accuracy!
-   //void find_all_placement_moves(bool color, vector<turn*> &turns);
-   void find_all_movement_moves(bool color, vector<turn*> &turns);
+   // Function for the evaluation function that implement partial functionality
+   // of those above. Number has to be an array as large as the number of 
+   // possible pieces and needs to be zero-initialized. Is trimmed for speed, 
+   // not accuracy!
+   void count_movement_moves(bool color, int* number);
    
    // Carry out a turn or undo it. Will create a copy of the turn object, so
    // that it can be deleted after calling perform_move().

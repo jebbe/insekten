@@ -123,7 +123,7 @@ void game::find_placeable_tiles(bool color, vector<board*> &tiles) {
 // }
 
 
-void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
+void game::count_movement_moves(bool color, int* number) {
    
    // Do we have to place the queen bee?
    if(half_turns > 5 && stock[int(color)][queen] == 1) return;
@@ -134,7 +134,8 @@ void game::find_all_movement_moves(bool color, vector<turn*> &turns) {
       board* started = my_board;
       do {
          if(it->ontop != 0) {
-            it->ontop->list_moves(turns, just_moved, color, false, false);
+            number[int(it->ontop->kind)] 
+               += it->ontop->count_moves(just_moved, color);
          }
          it = it->next;
       } while(it != started);
