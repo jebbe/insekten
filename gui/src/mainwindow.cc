@@ -296,8 +296,8 @@ void MainWindow::beginGame() {
    black_human = ui->black_human->isChecked();
    
    if(ui->easy->isChecked()) {
-      white_level = 2;
-      black_level = 2;
+      white_level = 1;
+      black_level = 1;
    } else if(ui->medium->isChecked()) {
       white_level = 3;
       black_level = 3;

@@ -488,7 +488,7 @@ int piece::count_moves_ladybug() {
 }
 
 int piece::count_moves_mosquito() {
-   
+   int n_moves = 0;
    // Am I on top of somebody and thus a beetle?
    if(at->ontop != this) {
       return count_moves_beetle();
@@ -499,21 +499,28 @@ int piece::count_moves_mosquito() {
             while(it->ontop != 0) it = it->ontop;
             switch(it->kind) {
                case queen:
-                  return count_moves_queen();
+                  n_moves += count_moves_queen();
+                  break;
                case ant:
-                  return count_moves_ant();
+                  n_moves += count_moves_ant();
+                  break;
                case spider:
-                  return count_moves_spider();
+                  n_moves += count_moves_spider();
+                  break;
                case cricket:
-                  return count_moves_cricket();
+                  n_moves += count_moves_cricket();
+                  break;
                case beetle:
-                  return count_moves_beetle();
+                  n_moves += count_moves_beetle();
+                  break;
                case ladybug:
-                  return count_moves_ladybug();
+                  n_moves += count_moves_ladybug();
+                  break;
                case pillbug:
-                  return count_moves_pillbug();
+                  n_moves += count_moves_pillbug();
+                  break;
                case mosquito:
-                  return 0;
+                  break;
                default:
                   cerr << "There's a piece on the board that has no valid type." << endl;
                   exit(-1);
@@ -521,6 +528,7 @@ int piece::count_moves_mosquito() {
          }
       }
    }
+   return n_moves;
 }
 
 int piece::count_moves_pillbug() {

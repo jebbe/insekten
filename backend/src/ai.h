@@ -74,7 +74,7 @@ private:
    //    The higher stock_degrading, the more valuable additional unplaced pieces.
    //
    //    Warning: Dgr values smaller than one can screw up the evaluation function.
-   const float movements_weight = 4;
+   const float movements_weight = 5;
    const float stock_weight = 40;
    
    const float score[8][4] = {
@@ -82,7 +82,7 @@ private:
     { 10,               10000,      1,            1 },      // Queen       
     { 1,                 2,         1,            1.5 },    // Ant         
     { 3,                 3,         1,            1 },      // Spider      
-    { 3,                 3,         1,            1 },      // Cricket     
+    { 2,                 3,         1,            1 },      // Cricket     
     { 2,                 3,         1,            1 },      // Beetle      
     { 1,                 3,         1,            1 },      // Ladybug     
     { 1,                 3,         1,            1 },      // Mosquito    
@@ -101,7 +101,7 @@ private:
    // Enforcing certain behaviour outside the evaluation function
    // draw_score comes into play here as well
    const float ant_first = -50.;
-   const float queen_first = -100.;
+   const float queen_first = -200.;
 
    // TODO: 
    // Make low-value pieces next to queen more valuable than high-value pieces
