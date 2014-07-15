@@ -74,7 +74,7 @@ private:
    //    The higher stock_degrading, the more valuable additional unplaced pieces.
    //
    //    Warning: Dgr values smaller than one can screw up the evaluation function.
-   const float movements_weight = 5;
+   const float movements_weight = 4;
    const float stock_weight = 40;
    
    const float score[8][4] = {

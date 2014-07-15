@@ -231,7 +231,7 @@ void piece::remove_duplicate_moves(vector<turn*> &turns) {
 }
 
 // ============
-//  Find moves
+//  Find individual moves
 // ============
 
 void piece::find_moves_queen(vector<turn*> &turns) {
@@ -378,7 +378,7 @@ void piece::find_moves_pillbug(vector<turn*> &turns) {
 }
 
 // ============
-// Count moves
+// Count individual moves
 // ============
 
 int piece::count_moves_queen() {
