@@ -254,7 +254,7 @@ void MainWindow::abortBeginGame() {
 void MainWindow::beginGame() {
 
    // Save settings
-   QSettings settings("hive", "insekten");
+   QSettings settings("hive", "hive");
    settings.setValue("rules_m", ui->mosquito_check->isChecked());
    settings.setValue("rules_l", ui->ladybug_check->isChecked());
    settings.setValue("rules_p", ui->pillbug_check->isChecked());

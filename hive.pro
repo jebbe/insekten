@@ -9,7 +9,7 @@ MOC_DIR = obj
 RCC_DIR = obj
 UI_DIR = obj
 
-QT += widgets
+#QT += widgets
 
 # Input
 HEADERS += backend/src/ai.h \
