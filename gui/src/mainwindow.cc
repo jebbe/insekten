@@ -162,14 +162,14 @@ void MainWindow::newGame() {
                                    ~Qt::WindowCloseButtonHint) );
 
    // Load settings
-   QSettings settings("hive", "insekten");
-   bool rules_m = settings.value("rules_m", "").toBool();
-   bool rules_l = settings.value("rules_l", "").toBool();
-   bool rules_p = settings.value("rules_p", "").toBool();
-   bool rules_nqf = settings.value("rules_nqf", "").toBool();
-   int ai_strength = settings.value("ai_strength", "").toInt();
-   bool white_human = settings.value("white_human", "").toBool();
-   bool black_human = settings.value("black_human", "").toBool();
+   QSettings settings("hive", "hive");
+   bool rules_m = settings.value("rules_m", "false").toBool();
+   bool rules_l = settings.value("rules_l", "false").toBool();
+   bool rules_p = settings.value("rules_p", "false").toBool();
+   bool rules_nqf = settings.value("rules_nqf", "false").toBool();
+   int ai_strength = settings.value("ai_strength", "1").toInt();
+   bool white_human = settings.value("white_human", "true").toBool();
+   bool black_human = settings.value("black_human", "false").toBool();
    
    // Apply settings
    if(rules_m) ui->mosquito_check->setChecked(true);
