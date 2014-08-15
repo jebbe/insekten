@@ -16,6 +16,11 @@ GameScene::GameScene(QObject *parent) : QGraphicsScene(parent) {
 }
 
 
+void GameScene::setView(QGraphicsView *embeddedIn) {
+   myView = embeddedIn;
+}
+
+
 void GameScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *me) {
 
    if(me->button() != Qt::LeftButton) {
@@ -200,12 +205,13 @@ void GameScene::redraw(ai *game, uiMove *my_move, bool waiting_message) {
    
    // Draw a "Computer is thinking" message
    if(waiting_message) {
+      QPointF currentCenter = myView->mapToScene(myView->rect().center());
       QGraphicsTextItem * text_item = new QGraphicsTextItem;
       text_item->setPlainText("Computer is thinking...");
       text_item->setDefaultTextColor(Qt::red);
       text_item->setFont(QFont("Arial[Helvetica]", 18, QFont::Bold));
       this->addItem(text_item);
-      text_item->setPos(MAIN_SIZE/2-130, MAIN_SIZE/2-40);
+      text_item->setPos(currentCenter.x()-130, currentCenter.y()-40);
    }
    
    game->clear_2d_vector(targets);

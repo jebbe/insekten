@@ -44,6 +44,7 @@ MainWindow::MainWindow() {
    sceneMain = new GameScene(this);
    sceneMain->setSceneRect(QRectF(0, 0, MAIN_SIZE, MAIN_SIZE));
    viewMain = new QGraphicsView(sceneMain);
+   sceneMain->setView(viewMain);
    connect(sceneMain, SIGNAL(clicked_piece(int, int)), 
            this, SLOT(mainPieceSelected(int, int)));
    connect(sceneMain, SIGNAL(click_abort()), 
