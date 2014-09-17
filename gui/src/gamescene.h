@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 
 #include <vector>
