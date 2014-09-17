@@ -2,6 +2,7 @@
 #define gamescene_h 
 
 #include <QtGui>
+#include <QtWidgets>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
